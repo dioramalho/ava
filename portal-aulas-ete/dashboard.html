@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal de Aulas - TDS | Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="bg-ete-light">
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top py-3">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+          <img src="assets/logo.svg" alt="Logo ETE" class="ete-logo-sm" />
+          <div>
+            <span class="d-block fw-bold text-ete-primary">Portal de Aulas - TDS</span>
+            <small class="text-muted">Escola Técnica Estadual</small>
+          </div>
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarPortal"
+          aria-controls="navbarPortal"
+          aria-expanded="false"
+          aria-label="Alternar navegação"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarPortal">
+          <ul class="navbar-nav ms-auto align-items-lg-center gap-2 mt-3 mt-lg-0">
+            <li class="nav-item">
+              <button id="logoutBtn" class="btn btn-outline-danger btn-touch w-100">
+                <i class="bi bi-box-arrow-right me-1"></i>Sair
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container py-4 py-md-5">
+      <section class="mb-4">
+        <article class="card border-0 shadow-sm rounded-4 border-start border-4 border-warning">
+          <div class="card-body p-4">
+            <h2 class="h4 fw-bold mb-3">📢 Quadro de Recados</h2>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item px-0">• Prova de Algoritmos na próxima semana</li>
+              <li class="list-group-item px-0">• Entregar atividade de Banco de Dados até sexta</li>
+              <li class="list-group-item px-0">• Novo material de HTML disponível</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <section aria-labelledby="disciplinasTitulo">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h2 id="disciplinasTitulo" class="h4 fw-bold text-ete-primary mb-0">Disciplinas</h2>
+          <span class="badge rounded-pill text-bg-primary">TDS 2024 / 2025</span>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-12 col-md-6 col-xl-4">
+            <article class="card h-100 border-0 shadow-sm rounded-4 subject-card">
+              <div class="card-body d-flex flex-column p-4">
+                <h3 class="h5 fw-bold mb-1">Algoritmos</h3>
+                <p class="text-muted mb-3">Turma TDS 2024</p>
+                <ul class="list-unstyled d-grid gap-2 mb-0 mt-auto">
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-01-introducao.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 01 — Introdução.pdf</a></li>
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-02-fluxogramas.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 02 — Fluxogramas.pdf</a></li>
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-03-portugol.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 03 — Portugol.pdf</a></li>
+                </ul>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-4">
+            <article class="card h-100 border-0 shadow-sm rounded-4 subject-card">
+              <div class="card-body d-flex flex-column p-4">
+                <h3 class="h5 fw-bold mb-1">Banco de Dados</h3>
+                <p class="text-muted mb-3">Turma TDS 2024</p>
+                <ul class="list-unstyled d-grid gap-2 mb-0 mt-auto">
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-01-modelagem.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 01 — Modelagem.pdf</a></li>
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-02-der.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 02 — DER.pdf</a></li>
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-03-sql-basico.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 03 — SQL Básico.pdf</a></li>
+                </ul>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-4">
+            <article class="card h-100 border-0 shadow-sm rounded-4 subject-card border-success-subtle">
+              <div class="card-body d-flex flex-column p-4">
+                <h3 class="h5 fw-bold mb-1">Desenvolvimento Web</h3>
+                <p class="text-muted mb-3">Turma TDS 2025</p>
+                <ul class="list-unstyled d-grid gap-2 mb-0 mt-auto">
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-01-html.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 01 — HTML.pdf</a></li>
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-02-css.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 02 — CSS.pdf</a></li>
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-03-bootstrap.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 03 — Bootstrap.pdf</a></li>
+                </ul>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="text-center py-4 text-muted small">
+      © 2026 Escola Técnica Estadual — Portal de Aulas TDS
+    </footer>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>
