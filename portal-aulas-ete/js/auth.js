@@ -31,6 +31,11 @@ if (loginForm) {
 const protectedPages = ['dashboard.html', 'dashboard-professor.html'];
 const currentPage = window.location.pathname.split('/').pop();
 if (protectedPages.includes(currentPage) && localStorage.getItem('eteAuth') !== 'true') {
+<<<<<<< codex/create-front-end-web-portal-with-bootstrap-5-pgzu17
+=======
+const isDashboard = window.location.pathname.endsWith('dashboard.html');
+if (isDashboard && localStorage.getItem('eteAuth') !== 'true') {
+>>>>>>> main
   window.location.href = 'index.html';
 }
 

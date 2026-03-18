@@ -22,7 +22,7 @@ CREATE TABLE usuarios (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   nome VARCHAR(120) NOT NULL,
   login VARCHAR(60) NOT NULL,
-  senha VARCHAR(40) NOT NULL,
+  senha VARCHAR(255) NOT NULL,
   perfil ENUM('professor', 'aluno', 'admin') NOT NULL DEFAULT 'professor',
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
@@ -91,7 +91,7 @@ CREATE TABLE documentos (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO usuarios (id, nome, login, senha, perfil) VALUES
-  (1, 'Professor Responsável', 'professor', '7110eda4d09e062aa5e4a390b0a572ac0d2c0220', 'professor');
+  (1, 'Professor Responsável', 'professor', '1234', 'professor');
 
 INSERT INTO turmas (id, nome, ano_letivo, turno, descricao) VALUES
   (1, 'TDS 2024', 2024, 'Noite', 'Turma do curso Técnico em Desenvolvimento de Sistemas 2024'),
