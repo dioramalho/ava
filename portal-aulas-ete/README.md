@@ -28,10 +28,13 @@ portal-aulas-ete/
 3. Você será redirecionado para `dashboard.html`.
 4. Clique nos botões de PDF para abrir os materiais.
 5. Para acessar o painel do professor, abra `dashboard-professor.html` (após login simulado).
+6. Se desejar preparar o banco local, importe `../portal_aulas_ete.sql` no phpMyAdmin ou no MariaDB/MySQL.
 
 ## Observações
 
 - Não há backend real.
 - O login usa validação simples em JavaScript e `localStorage` para proteger as páginas de aluno e professor.
+- A estrutura foi separada para facilitar integração futura com API/back-end.
+- O arquivo `portal_aulas_ete.sql`, na raiz do repositório, cria o banco com dados mínimos de professor, turmas, alunos, matérias, recados e documentos.
 - O login usa validação simples em JavaScript e `localStorage`.
 - A estrutura foi separada para facilitar integração futura com API/back-end.
