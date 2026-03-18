@@ -8,7 +8,6 @@ Este repositório contém um portal front-end para aulas do curso Técnico em De
 
 - Pasta: `portal-aulas-ete/`
 - Tecnologias: HTML, CSS, Bootstrap 5 e JavaScript (login simulado)
-- Módulos: dashboard do aluno e dashboard do professor (cadastros/publicações simuladas)
 
 ## Como executar localmente
 

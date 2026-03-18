@@ -33,4 +33,5 @@ portal-aulas-ete/
 
 - Não há backend real.
 - O login usa validação simples em JavaScript e `localStorage` para proteger as páginas de aluno e professor.
+- O login usa validação simples em JavaScript e `localStorage`.
 - A estrutura foi separada para facilitar integração futura com API/back-end.
