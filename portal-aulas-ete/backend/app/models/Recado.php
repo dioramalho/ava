@@ -26,12 +26,11 @@ class Recado extends BaseModel
 
     public function create($data)
     {
-        $statement = $this->connection->prepare('INSERT INTO recados (turma_id, titulo, mensagem, data_publicacao) VALUES (:turma_id, :titulo, :mensagem, :data_publicacao)');
+        $statement = $this->connection->prepare('INSERT INTO recados (turma_id, titulo, mensagem, data_publicacao) VALUES (:turma_id, :titulo, :mensagem, NOW())');
         $statement->execute(array(
             ':turma_id' => $data['turma_id'],
             ':titulo' => $data['titulo'],
-            ':mensagem' => $data['mensagem'],
-            ':data_publicacao' => date('Y-m-d H:i:s')
+            ':mensagem' => $data['mensagem']
         ));
 
         return $this->connection->lastInsertId();

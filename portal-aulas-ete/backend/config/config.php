@@ -2,14 +2,12 @@
 
 return array(
     'db' => array(
-        'driver' => getenv('APP_DB_DRIVER') ? getenv('APP_DB_DRIVER') : 'mysql',
-        'host' => getenv('APP_DB_HOST') ? getenv('APP_DB_HOST') : '127.0.0.1',
-        'port' => getenv('APP_DB_PORT') ? getenv('APP_DB_PORT') : '3306',
-        'dbname' => getenv('APP_DB_NAME') ? getenv('APP_DB_NAME') : 'portal_aulas_ete',
+        'host' => 'localhost',
+        'port' => '3306',
+        'dbname' => 'portal_aulas_ete',
         'charset' => 'utf8mb4',
-        'username' => getenv('APP_DB_USER') ? getenv('APP_DB_USER') : 'root',
-        'password' => getenv('APP_DB_PASSWORD') ? getenv('APP_DB_PASSWORD') : '',
-        'database' => getenv('APP_DB_DATABASE') ? getenv('APP_DB_DATABASE') : ''
+        'username' => 'root',
+        'password' => ''
     ),
     'app' => array(
         'base_path' => dirname(__DIR__),

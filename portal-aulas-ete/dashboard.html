@@ -56,8 +56,10 @@
         <article class="card border-0 shadow-sm rounded-4 border-start border-4 border-warning">
           <div class="card-body p-4">
             <h2 class="h4 fw-bold mb-3">📢 Quadro de Recados</h2>
-            <ul id="recadosList" class="list-group list-group-flush">
-              <li class="list-group-item px-0 text-muted">Carregando recados...</li>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item px-0">• Prova de Algoritmos na próxima semana</li>
+              <li class="list-group-item px-0">• Entregar atividade de Banco de Dados até sexta</li>
+              <li class="list-group-item px-0">• Novo material de HTML disponível</li>
             </ul>
           </div>
         </article>
@@ -72,11 +74,52 @@
               <i class="bi bi-person-workspace me-1"></i>Área do professor
             </a>
           </div>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h2 id="disciplinasTitulo" class="h4 fw-bold text-ete-primary mb-0">Disciplinas</h2>
+          <span class="badge rounded-pill text-bg-primary">TDS 2024 / 2025</span>
         </div>
 
-        <div id="disciplinasGrid" class="row g-4">
-          <div class="col-12">
-            <div class="alert alert-light border mb-0">Carregando disciplinas...</div>
+        <div class="row g-4">
+          <div class="col-12 col-md-6 col-xl-4">
+            <article class="card h-100 border-0 shadow-sm rounded-4 subject-card">
+              <div class="card-body d-flex flex-column p-4">
+                <h3 class="h5 fw-bold mb-1">Algoritmos</h3>
+                <p class="text-muted mb-3">Turma TDS 2024</p>
+                <ul class="list-unstyled d-grid gap-2 mb-0 mt-auto">
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-01-introducao.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 01 — Introdução.pdf</a></li>
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-02-fluxogramas.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 02 — Fluxogramas.pdf</a></li>
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-03-portugol.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 03 — Portugol.pdf</a></li>
+                </ul>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-4">
+            <article class="card h-100 border-0 shadow-sm rounded-4 subject-card">
+              <div class="card-body d-flex flex-column p-4">
+                <h3 class="h5 fw-bold mb-1">Banco de Dados</h3>
+                <p class="text-muted mb-3">Turma TDS 2024</p>
+                <ul class="list-unstyled d-grid gap-2 mb-0 mt-auto">
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-01-modelagem.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 01 — Modelagem.pdf</a></li>
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-02-der.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 02 — DER.pdf</a></li>
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-03-sql-basico.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 03 — SQL Básico.pdf</a></li>
+                </ul>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-12 col-md-6 col-xl-4">
+            <article class="card h-100 border-0 shadow-sm rounded-4 subject-card border-success-subtle">
+              <div class="card-body d-flex flex-column p-4">
+                <h3 class="h5 fw-bold mb-1">Desenvolvimento Web</h3>
+                <p class="text-muted mb-3">Turma TDS 2025</p>
+                <ul class="list-unstyled d-grid gap-2 mb-0 mt-auto">
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-01-html.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 01 — HTML.pdf</a></li>
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-02-css.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 02 — CSS.pdf</a></li>
+                  <li><a class="btn btn-outline-primary btn-touch w-100 text-start" href="assets/pdf/aula-03-bootstrap.pdf" target="_blank"><i class="bi bi-file-earmark-pdf me-2 text-danger"></i>Aula 03 — Bootstrap.pdf</a></li>
+                </ul>
+              </div>
+            </article>
           </div>
         </div>
       </section>
@@ -91,8 +134,5 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
-    <script src="js/api.js"></script>
-    <script src="js/session.js"></script>
-    <script src="js/student.js"></script>
   </body>
 </html>

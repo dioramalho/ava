@@ -42,3 +42,12 @@ portal-aulas-ete/
 - A estrutura foi separada para facilitar integração futura com API/back-end.
 - O arquivo `portal_aulas_ete.sql`, na raiz do repositório, cria o banco com dados mínimos de professor, turmas, alunos, matérias, recados e documentos.
 - O backend em `backend/` usa PHP 5.6 + PDO, arquitetura MVC simples e autenticação persistida com `sha1`, conforme solicitado.
+
+## Observações
+
+- Não há backend real.
+- O login usa validação simples em JavaScript e `localStorage` para proteger as páginas de aluno e professor.
+- A estrutura foi separada para facilitar integração futura com API/back-end.
+- O arquivo `portal_aulas_ete.sql`, na raiz do repositório, cria o banco com dados mínimos de professor, turmas, alunos, matérias, recados e documentos.
+- O login usa validação simples em JavaScript e `localStorage`.
+- A estrutura foi separada para facilitar integração futura com API/back-end.
