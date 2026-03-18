@@ -11,13 +11,10 @@ portal-aulas-ete/
 ├── dashboard-professor.html
 ├── css/style.css
 ├── js/auth.js
-<<<<<<< codex/create-front-end-web-portal-with-bootstrap-5-pgzu17
 ├── backend/
 │   ├── app/
 │   ├── config/
 │   └── public/
-=======
->>>>>>> main
 ├── assets/
 │   ├── logo.svg
 │   └── pdf/
@@ -36,7 +33,6 @@ portal-aulas-ete/
 4. Clique nos botões de PDF para abrir os materiais.
 5. Para acessar o painel do professor, abra `dashboard-professor.html` (após login simulado).
 6. Se desejar preparar o banco local, importe `../portal_aulas_ete.sql` no phpMyAdmin ou no MariaDB/MySQL.
-<<<<<<< codex/create-front-end-web-portal-with-bootstrap-5-pgzu17
 7. Para subir o backend PHP 5.6 com MVC/PDO, veja `backend/README.md`.
 
 ## Observações
@@ -46,7 +42,6 @@ portal-aulas-ete/
 - A estrutura foi separada para facilitar integração futura com API/back-end.
 - O arquivo `portal_aulas_ete.sql`, na raiz do repositório, cria o banco com dados mínimos de professor, turmas, alunos, matérias, recados e documentos.
 - O backend em `backend/` usa PHP 5.6 + PDO, arquitetura MVC simples e autenticação persistida com `sha1`, conforme solicitado.
-=======
 
 ## Observações
 
@@ -56,4 +51,3 @@ portal-aulas-ete/
 - O arquivo `portal_aulas_ete.sql`, na raiz do repositório, cria o banco com dados mínimos de professor, turmas, alunos, matérias, recados e documentos.
 - O login usa validação simples em JavaScript e `localStorage`.
 - A estrutura foi separada para facilitar integração futura com API/back-end.
->>>>>>> main
