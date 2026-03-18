@@ -28,6 +28,9 @@ if (loginForm) {
 }
 
 // Proteção simples para página interna.
+const protectedPages = ['dashboard.html', 'dashboard-professor.html'];
+const currentPage = window.location.pathname.split('/').pop();
+if (protectedPages.includes(currentPage) && localStorage.getItem('eteAuth') !== 'true') {
 const isDashboard = window.location.pathname.endsWith('dashboard.html');
 if (isDashboard && localStorage.getItem('eteAuth') !== 'true') {
   window.location.href = 'index.html';
