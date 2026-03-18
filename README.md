@@ -31,5 +31,5 @@ Este repositório contém um portal front-end para aulas do curso Técnico em De
 
 ## Banco de dados
 
-- O projeto utiliza a estrutura MySQL/MariaDB definida em `portal_aulas_ete.sql`.
-- Antes de iniciar o portal, configure as variáveis `PORTAL_DB_HOST`, `PORTAL_DB_PORT`, `PORTAL_DB_NAME`, `PORTAL_DB_USER` e `PORTAL_DB_PASSWORD`, e importe `portal_aulas_ete.sql` no banco.
+- Por padrão, o backend sobe com um banco SQLite local em `portal-aulas-ete/backend/storage/database.sqlite`, inicializado automaticamente com dados de exemplo.
+- Se desejar usar MySQL/MariaDB, configure as variáveis `PORTAL_DB_*` antes de iniciar o servidor e importe `portal_aulas_ete.sql`.

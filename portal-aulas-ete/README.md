@@ -35,8 +35,8 @@ portal-aulas-ete/
 3. Você será redirecionado para `dashboard.html`.
 4. Clique nos botões de PDF para abrir os materiais.
 5. Para acessar o painel do professor, abra `dashboard-professor.html` (após login simulado).
-6. Importe `../portal_aulas_ete.sql` em um banco MySQL/MariaDB.
-7. Ajuste as variáveis `PORTAL_DB_HOST`, `PORTAL_DB_PORT`, `PORTAL_DB_NAME`, `PORTAL_DB_USER` e `PORTAL_DB_PASSWORD` para o ambiente desejado.
+6. O backend utiliza por padrão um banco SQLite local em `backend/storage/database.sqlite`, criado automaticamente com dados iniciais.
+7. Se desejar preparar o banco em MySQL/MariaDB, importe `../portal_aulas_ete.sql` e ajuste as variáveis `PORTAL_DB_*`.
 8. Para detalhes do backend PHP com MVC/PDO, veja `backend/README.md`.
 
 ## Observações
