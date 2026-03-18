@@ -25,29 +25,24 @@ portal-aulas-ete/
 
 ## Como usar
 
-1. Abra `index.html` em um servidor estático.
+1. Inicie o servidor PHP na raiz do portal:
+   ```bash
+   php -S 127.0.0.1:8000 -t portal-aulas-ete
+   ```
 2. Faça login com:
    - **Login:** `professor`
    - **Senha:** `1234`
 3. Você será redirecionado para `dashboard.html`.
 4. Clique nos botões de PDF para abrir os materiais.
 5. Para acessar o painel do professor, abra `dashboard-professor.html` (após login simulado).
-6. Se desejar preparar o banco local, importe `../portal_aulas_ete.sql` no phpMyAdmin ou no MariaDB/MySQL.
-7. Para subir o backend PHP 5.6 com MVC/PDO, veja `backend/README.md`.
+6. O backend utiliza por padrão um banco SQLite local em `backend/storage/database.sqlite`, criado automaticamente com dados iniciais.
+7. Se desejar preparar o banco em MySQL/MariaDB, importe `../portal_aulas_ete.sql` e ajuste as variáveis `PORTAL_DB_*`.
+8. Para detalhes do backend PHP com MVC/PDO, veja `backend/README.md`.
 
 ## Observações
 
 - Agora existe um backend PHP simples em `backend/`, mantendo o front-end principal separado para facilitar evolução gradual.
-- O login usa validação simples em JavaScript e `localStorage` para proteger as páginas de aluno e professor.
+- O login, as listagens e os cadastros consomem a API do backend e persistem os dados no banco configurado.
 - A estrutura foi separada para facilitar integração futura com API/back-end.
 - O arquivo `portal_aulas_ete.sql`, na raiz do repositório, cria o banco com dados mínimos de professor, turmas, alunos, matérias, recados e documentos.
 - O backend em `backend/` usa PHP 5.6 + PDO, arquitetura MVC simples e autenticação persistida com `sha1`, conforme solicitado.
-
-## Observações
-
-- Não há backend real.
-- O login usa validação simples em JavaScript e `localStorage` para proteger as páginas de aluno e professor.
-- A estrutura foi separada para facilitar integração futura com API/back-end.
-- O arquivo `portal_aulas_ete.sql`, na raiz do repositório, cria o banco com dados mínimos de professor, turmas, alunos, matérias, recados e documentos.
-- O login usa validação simples em JavaScript e `localStorage`.
-- A estrutura foi separada para facilitar integração futura com API/back-end.

@@ -62,7 +62,7 @@
           <div class="card-body p-4">
             <h1 class="h4 fw-bold mb-2">Painel do Professor</h1>
             <p class="mb-0 text-muted">
-              Gerencie turmas, alunos, matérias, documentos e recados por turma (modo front-end com dados locais).
+              Gerencie turmas, alunos, matérias, documentos e recados por turma com persistência no banco de dados.
             </p>
           </div>
         </article>
@@ -76,6 +76,17 @@
               <form id="turmaForm" class="d-grid gap-2">
                 <label for="turmaNome" class="form-label mb-0">Nome da turma</label>
                 <input id="turmaNome" type="text" class="form-control" placeholder="Ex.: TDS 2026" required />
+                <label for="turmaAnoLetivo" class="form-label mb-0">Ano letivo</label>
+                <input id="turmaAnoLetivo" type="number" class="form-control" min="2024" max="2100" placeholder="2026" required />
+                <label for="turmaTurno" class="form-label mb-0">Turno</label>
+                <select id="turmaTurno" class="form-select" required>
+                  <option value="Manhã">Manhã</option>
+                  <option value="Tarde">Tarde</option>
+                  <option value="Noite">Noite</option>
+                  <option value="Integral">Integral</option>
+                </select>
+                <label for="turmaDescricao" class="form-label mb-0">Descrição</label>
+                <textarea id="turmaDescricao" class="form-control" rows="3" placeholder="Resumo da turma (opcional)"></textarea>
                 <button type="submit" class="btn btn-ete-primary btn-touch mt-2">Cadastrar turma</button>
               </form>
             </div>
@@ -93,6 +104,8 @@
                 <select id="alunoTurma" class="form-select" required></select>
                 <label for="alunoEmail" class="form-label mb-0">E-mail (básico)</label>
                 <input id="alunoEmail" type="email" class="form-control" placeholder="aluno@escola.com" required />
+                <label for="alunoMatricula" class="form-label mb-0">Matrícula</label>
+                <input id="alunoMatricula" type="text" class="form-control" placeholder="Ex.: TDS2026-001" required />
                 <button type="submit" class="btn btn-ete-primary btn-touch mt-2">Cadastrar aluno</button>
               </form>
             </div>
@@ -108,6 +121,8 @@
                 <input id="materiaNome" type="text" class="form-control" placeholder="Ex.: Programação Web" required />
                 <label for="materiaTurma" class="form-label mb-0">Turma</label>
                 <select id="materiaTurma" class="form-select" required></select>
+                <label for="materiaDescricao" class="form-label mb-0">Descrição</label>
+                <textarea id="materiaDescricao" class="form-control" rows="3" placeholder="Conteúdo resumido da matéria (opcional)"></textarea>
                 <button type="submit" class="btn btn-ete-primary btn-touch mt-2">Cadastrar matéria</button>
               </form>
             </div>
@@ -127,6 +142,8 @@
                 <select id="pdfMateria" class="form-select" required></select>
                 <label for="pdfTitulo" class="form-label mb-0">Título do documento</label>
                 <input id="pdfTitulo" type="text" class="form-control" placeholder="Ex.: Aula 04 — Funções" required />
+                <label for="pdfDescricao" class="form-label mb-0">Descrição</label>
+                <input id="pdfDescricao" type="text" class="form-control" placeholder="Resumo curto do conteúdo (opcional)" />
                 <label for="pdfArquivo" class="form-label mb-0">Arquivo PDF</label>
                 <input id="pdfArquivo" type="file" class="form-control" accept="application/pdf" required />
                 <button type="submit" class="btn btn-ete-primary btn-touch mt-2">Postar documento</button>
@@ -142,6 +159,8 @@
               <form id="recadoForm" class="d-grid gap-2">
                 <label for="recadoTurma" class="form-label mb-0">Turma</label>
                 <select id="recadoTurma" class="form-select" required></select>
+                <label for="recadoTitulo" class="form-label mb-0">Título</label>
+                <input id="recadoTitulo" type="text" class="form-control" placeholder="Ex.: Lembrete de entrega" required />
                 <label for="recadoTexto" class="form-label mb-0">Mensagem</label>
                 <textarea id="recadoTexto" class="form-control" rows="4" placeholder="Escreva o recado para a turma" required></textarea>
                 <button type="submit" class="btn btn-ete-primary btn-touch mt-2">Publicar recado</button>
@@ -156,7 +175,9 @@
           <article class="card border-0 shadow-sm rounded-4">
             <div class="card-body p-4">
               <h2 class="h5 fw-bold mb-3">Turmas e Alunos</h2>
-              <div id="turmasContainer" class="d-grid gap-3"></div>
+              <div id="turmasContainer" class="d-grid gap-3">
+                <p class="text-muted mb-0">Carregando dados...</p>
+              </div>
             </div>
           </article>
         </div>
@@ -165,13 +186,17 @@
           <article class="card border-0 shadow-sm rounded-4 mb-4">
             <div class="card-body p-4">
               <h2 class="h5 fw-bold mb-3">Matérias por Turma</h2>
-              <div id="materiasContainer" class="d-grid gap-2"></div>
+              <div id="materiasContainer" class="d-grid gap-2">
+                <p class="text-muted mb-0">Carregando dados...</p>
+              </div>
             </div>
           </article>
           <article class="card border-0 shadow-sm rounded-4">
             <div class="card-body p-4">
               <h2 class="h5 fw-bold mb-3">Publicações (PDF e Recados)</h2>
-              <div id="publicacoesContainer" class="d-grid gap-3"></div>
+              <div id="publicacoesContainer" class="d-grid gap-3">
+                <p class="text-muted mb-0">Carregando dados...</p>
+              </div>
             </div>
           </article>
         </div>

@@ -29,7 +29,7 @@ class Documento extends BaseModel
 
     public function create($data)
     {
-        $statement = $this->connection->prepare('INSERT INTO documentos (turma_id, materia_id, titulo, nome_arquivo, caminho_arquivo, descricao, data_publicacao) VALUES (:turma_id, :materia_id, :titulo, :nome_arquivo, :caminho_arquivo, :descricao, NOW())');
+        $statement = $this->connection->prepare('INSERT INTO documentos (turma_id, materia_id, titulo, nome_arquivo, caminho_arquivo, descricao, data_publicacao) VALUES (:turma_id, :materia_id, :titulo, :nome_arquivo, :caminho_arquivo, :descricao, CURRENT_TIMESTAMP)');
         $statement->execute(array(
             ':turma_id' => $data['turma_id'],
             ':materia_id' => $data['materia_id'],

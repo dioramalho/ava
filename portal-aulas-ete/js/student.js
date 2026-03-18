@@ -15,7 +15,11 @@
 
   async function initialize() {
     try {
-      await window.validatePortalSession();
+      const session = await window.validatePortalSession();
+      if (!session) {
+        return;
+      }
+
       const results = await Promise.all([
         apiRequest('/recados'),
         apiRequest('/documentos')
