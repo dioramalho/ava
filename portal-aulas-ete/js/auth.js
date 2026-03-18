@@ -1,62 +1,47 @@
-const loginForm = document.getElementById('loginForm');
-const loginAlert = document.getElementById('loginAlert');
-const protectedPages = ['dashboard.html', 'dashboard-professor.html'];
-const currentPage = window.location.pathname.split('/').pop();
+// Credenciais simuladas para demonstração front-end.
+const FAKE_USER = {
+  username: 'professor',
+  password: '1234'
+};
 
+// Controle do formulário de login.
+const loginForm = document.getElementById('loginForm');
 if (loginForm) {
-  loginForm.addEventListener('submit', async function (event) {
+  loginForm.addEventListener('submit', function (event) {
     event.preventDefault();
 
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const alertBox = document.getElementById('loginAlert');
 
-    try {
-      await apiRequest('/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          login: username,
-          senha: password
-        })
-      });
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
 
+    if (username === FAKE_USER.username && password === FAKE_USER.password) {
+      localStorage.setItem('eteAuth', 'true');
       window.location.href = 'dashboard.html';
-    } catch (error) {
-      if (loginAlert) {
-        loginAlert.classList.remove('d-none');
-        loginAlert.textContent = error.message || 'Login ou senha inválidos';
-      }
+      return;
     }
+
+    alertBox.classList.remove('d-none');
   });
 }
 
-async function validateSession() {
-  if (!protectedPages.includes(currentPage)) {
-    return;
-  }
-
-  try {
-    await apiRequest('/auth/me');
-  } catch (error) {
-    window.location.href = 'index.html';
-  }
+// Proteção simples para página interna.
+const protectedPages = ['dashboard.html', 'dashboard-professor.html'];
+const currentPage = window.location.pathname.split('/').pop();
+if (protectedPages.includes(currentPage) && localStorage.getItem('eteAuth') !== 'true') {
+const isDashboard = window.location.pathname.endsWith('dashboard.html');
+if (isDashboard && localStorage.getItem('eteAuth') !== 'true') {
+  window.location.href = 'index.html';
 }
 
+// Logout simples removendo estado local.
 const logoutBtn = document.getElementById('logoutBtn');
 if (logoutBtn) {
-  logoutBtn.addEventListener('click', async function () {
-    try {
-      await apiRequest('/auth/logout', {
-        method: 'POST'
-      });
-    } catch (error) {
-      // Mesmo com falha, segue para a tela de login.
-    }
-
+  logoutBtn.addEventListener('click', function () {
+    localStorage.removeItem('eteAuth');
     window.location.href = 'index.html';
   });
 }
 
-validateSession();

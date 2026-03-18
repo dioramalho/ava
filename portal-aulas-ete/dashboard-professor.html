@@ -75,18 +75,7 @@
               <h2 class="h5 fw-bold mb-3"><i class="bi bi-diagram-3-fill me-2"></i>Cadastrar Turma</h2>
               <form id="turmaForm" class="d-grid gap-2">
                 <label for="turmaNome" class="form-label mb-0">Nome da turma</label>
-                <input id="turmaNome" type="text" class="form-control" placeholder="Ex.: TDS" required />
-                <label for="turmaAno" class="form-label mb-0">Ano letivo</label>
-                <input id="turmaAno" type="number" min="2024" class="form-control" placeholder="2026" required />
-                <label for="turmaTurno" class="form-label mb-0">Turno</label>
-                <select id="turmaTurno" class="form-select" required>
-                  <option value="">Selecione</option>
-                  <option value="Manhã">Manhã</option>
-                  <option value="Tarde">Tarde</option>
-                  <option value="Noite">Noite</option>
-                </select>
-                <label for="turmaDescricao" class="form-label mb-0">Descrição</label>
-                <textarea id="turmaDescricao" class="form-control" rows="2" placeholder="Descrição resumida da turma"></textarea>
+                <input id="turmaNome" type="text" class="form-control" placeholder="Ex.: TDS 2026" required />
                 <button type="submit" class="btn btn-ete-primary btn-touch mt-2">Cadastrar turma</button>
               </form>
             </div>
@@ -104,8 +93,6 @@
                 <select id="alunoTurma" class="form-select" required></select>
                 <label for="alunoEmail" class="form-label mb-0">E-mail (básico)</label>
                 <input id="alunoEmail" type="email" class="form-control" placeholder="aluno@escola.com" required />
-                <label for="alunoMatricula" class="form-label mb-0">Matrícula</label>
-                <input id="alunoMatricula" type="text" class="form-control" placeholder="TDS2026-001" required />
                 <button type="submit" class="btn btn-ete-primary btn-touch mt-2">Cadastrar aluno</button>
               </form>
             </div>
@@ -121,8 +108,6 @@
                 <input id="materiaNome" type="text" class="form-control" placeholder="Ex.: Programação Web" required />
                 <label for="materiaTurma" class="form-label mb-0">Turma</label>
                 <select id="materiaTurma" class="form-select" required></select>
-                <label for="materiaDescricao" class="form-label mb-0">Descrição</label>
-                <textarea id="materiaDescricao" class="form-control" rows="2" placeholder="Conteúdo principal da matéria"></textarea>
                 <button type="submit" class="btn btn-ete-primary btn-touch mt-2">Cadastrar matéria</button>
               </form>
             </div>
@@ -142,8 +127,6 @@
                 <select id="pdfMateria" class="form-select" required></select>
                 <label for="pdfTitulo" class="form-label mb-0">Título do documento</label>
                 <input id="pdfTitulo" type="text" class="form-control" placeholder="Ex.: Aula 04 — Funções" required />
-                <label for="pdfDescricao" class="form-label mb-0">Descrição</label>
-                <textarea id="pdfDescricao" class="form-control" rows="2" placeholder="Descrição resumida do arquivo"></textarea>
                 <label for="pdfArquivo" class="form-label mb-0">Arquivo PDF</label>
                 <input id="pdfArquivo" type="file" class="form-control" accept="application/pdf" required />
                 <button type="submit" class="btn btn-ete-primary btn-touch mt-2">Postar documento</button>
@@ -159,8 +142,6 @@
               <form id="recadoForm" class="d-grid gap-2">
                 <label for="recadoTurma" class="form-label mb-0">Turma</label>
                 <select id="recadoTurma" class="form-select" required></select>
-                <label for="recadoTitulo" class="form-label mb-0">Título</label>
-                <input id="recadoTitulo" type="text" class="form-control" placeholder="Ex.: Aviso importante" required />
                 <label for="recadoTexto" class="form-label mb-0">Mensagem</label>
                 <textarea id="recadoTexto" class="form-control" rows="4" placeholder="Escreva o recado para a turma" required></textarea>
                 <button type="submit" class="btn btn-ete-primary btn-touch mt-2">Publicar recado</button>
@@ -206,7 +187,6 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
-    <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/professor.js"></script>
   </body>
