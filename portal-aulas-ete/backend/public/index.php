@@ -13,6 +13,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once dirname(__DIR__) . '/app/core/Autoloader.php';
 
-$request = new Request();
-$app = new App($request);
-$app->run();
+try {
+    $request = new Request();
+    $app = new App($request);
+    $app->run();
+} catch (Exception $exception) {
+    http_response_code(500);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(array(
+        'success' => false,
+        'message' => 'Erro interno ao processar a requisição.',
+        'error' => $exception->getMessage()
+    ));
+    exit;
+}

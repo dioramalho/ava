@@ -7,6 +7,10 @@
   const recadosList = document.getElementById('recadosList');
   const disciplinasGrid = document.getElementById('disciplinasGrid');
 
+  if (!recadosList || !disciplinasGrid) {
+    return;
+  }
+
   initialize();
 
   async function initialize() {
