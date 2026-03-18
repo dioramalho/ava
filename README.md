@@ -17,14 +17,19 @@ Este repositório contém um portal front-end para aulas do curso Técnico em De
    ```bash
    cd portal-aulas-ete
    ```
-2. Inicie um servidor estático simples:
+2. Inicie o servidor PHP na raiz do portal:
    ```bash
-   python -m http.server 8000
+   php -S 127.0.0.1:8000 -t portal-aulas-ete
    ```
 3. Abra no navegador:
-   - `http://localhost:8000/index.html`
+   - `http://127.0.0.1:8000/index.html`
 
-## Credenciais de acesso (simulado)
+## Credenciais de acesso
 
 - Usuário: `professor`
 - Senha: `1234`
+
+## Banco de dados
+
+- Por padrão, o backend sobe com um banco SQLite local em `portal-aulas-ete/backend/storage/database.sqlite`, inicializado automaticamente com dados de exemplo.
+- Se desejar usar MySQL/MariaDB, configure as variáveis `PORTAL_DB_*` antes de iniciar o servidor e importe `portal_aulas_ete.sql`.
