@@ -17,14 +17,23 @@ Este repositório contém um portal front-end para aulas do curso Técnico em De
    ```bash
    cd portal-aulas-ete
    ```
-2. Inicie um servidor estático simples:
+2. Inicie o servidor PHP na raiz do portal:
    ```bash
-   python -m http.server 8000
+   php -S 127.0.0.1:8000 -t portal-aulas-ete
    ```
 3. Abra no navegador:
-   - `http://localhost:8000/index.html`
+   - `http://127.0.0.1:8000/index.html`
 
-## Credenciais de acesso (simulado)
+## Credenciais de acesso
 
 - Usuário: `professor`
 - Senha: `1234`
+
+## Banco de dados
+
+- O projeto utiliza a estrutura MySQL/MariaDB definida em `portal_aulas_ete.sql`.
+- Antes de iniciar o portal, configure as variáveis `PORTAL_DB_HOST`, `PORTAL_DB_PORT`, `PORTAL_DB_NAME`, `PORTAL_DB_USER` e `PORTAL_DB_PASSWORD`, e importe `portal_aulas_ete.sql` no banco.
+
+## Deploy automático
+
+- Consulte `docs/github-actions-ftp-deploy.md` para configurar o deploy automático via GitHub Actions + FTP na branch `develop`.

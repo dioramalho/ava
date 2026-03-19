@@ -1,0 +1,74 @@
+name: Deploy via FTP (develop)
+
+"on":
+  push:
+    branches:
+      - develop
+
+concurrency:
+  group: deploy-develop
+  cancel-in-progress: true
+
+jobs:
+  ftp-deploy:
+    name: Publicar no ambiente de desenvolvimento
+    runs-on: ubuntu-latest
+
+    environment:
+      name: develop
+      url: http://ava.dev.diogoramalho.com.br/
+
+    steps:
+      - name: Baixar código do repositório
+        uses: actions/checkout@v4
+
+      # Esta action é baseada na documentação oficial do FTP Deploy Action:
+      # https://github.com/SamKirkland/FTP-Deploy-Action
+      - name: Enviar arquivos para a hospedagem via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          # Host FTP informado.
+          server: ftp.diogoramalho.com.br
+
+          # Usuário FTP informado.
+          # Se preferir ocultar este dado, troque por: ${{ secrets.FTP_USERNAME }}
+          username: ete@diogoramalho.com.br
+
+          # NÃO salve a senha no YAML.
+          # Crie o secret FTP_PASSWORD no GitHub e cole lá a senha da hospedagem.
+          # Exemplo do valor que você vai preencher no GitHub Secrets: xxx
+          password: ${{ secrets.FTP_PASSWORD }}
+
+          # Porta informada da hospedagem.
+          port: 21
+
+          # O dado recebido foi FTP na porta 21.
+          # Se a hospedagem exigir FTPS no futuro, altere para: ftps
+          protocol: ftp
+
+          # Pasta local que será publicada.
+          # Assim, sobe apenas o projeto do portal, sem README/arquivos auxiliares da raiz do repositório.
+          local-dir: ./portal-aulas-ete/
+
+          # Ajuste esta pasta conforme a estrutura real da sua hospedagem.
+          # Exemplos comuns:
+          #   ./
+          #   public_html/
+          #   public_html/ava.dev.diogoramalho.com.br/
+          server-dir: ./
+
+          # Mantém um arquivo de estado para deploy incremental.
+          state-name: .ftp-deploy-sync-state.json
+
+          # Nível de log padrão. Pode trocar para verbose se precisar depurar.
+          log-level: standard
+
+          # Arquivos/pastas que não devem ir para a hospedagem.
+          # Mantive o padrão da action e excluí também a própria pasta de workflow.
+          # A pasta de uploads foi excluída para evitar sobrescrever arquivos enviados em produção.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.github/**
+            **/backend/storage/uploads/**
