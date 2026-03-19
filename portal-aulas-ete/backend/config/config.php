@@ -7,14 +7,12 @@ if (!$dbDriver) {
 
 return array(
     'db' => array(
-        'driver' => $dbDriver,
-        'host' => getenv('PORTAL_DB_HOST') ? getenv('PORTAL_DB_HOST') : 'localhost',
-        'port' => getenv('PORTAL_DB_PORT') ? getenv('PORTAL_DB_PORT') : '3306',
-        'dbname' => getenv('PORTAL_DB_NAME') ? getenv('PORTAL_DB_NAME') : 'portal_aulas_ete',
-        'charset' => getenv('PORTAL_DB_CHARSET') ? getenv('PORTAL_DB_CHARSET') : 'utf8mb4',
-        'username' => getenv('PORTAL_DB_USER') ? getenv('PORTAL_DB_USER') : 'root',
-        'password' => getenv('PORTAL_DB_PASSWORD') ? getenv('PORTAL_DB_PASSWORD') : '',
-        'database' => getenv('PORTAL_DB_FILE') ? getenv('PORTAL_DB_FILE') : dirname(__DIR__) . '/storage/database.sqlite'
+        'host' => 'localhost',
+        'port' => '3306',
+        'dbname' => 'portal_aulas_ete',
+        'charset' => 'utf8mb4',
+        'username' => 'root',
+        'password' => ''
     ),
     'app' => array(
         'base_path' => dirname(__DIR__),
