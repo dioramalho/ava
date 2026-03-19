@@ -1,0 +1,35 @@
+name: Deploy via FTP (develop)
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ftp.diogoramalho.com.br
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftp
+
+          local-dir: ./portal-aulas-ete/
+          server-dir: /public_html/ava.dev.diogoramalho.com.br/
+
+          dangerous-clean-slate: true
+
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.github/**
+            **/backend/storage/uploads/**
