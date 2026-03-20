@@ -21,7 +21,6 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
           protocol: ftp
-          passive: true
 
           local-dir: ./portal-aulas-ete/
           server-dir: /public_html/ava.dev.diogoramalho.com.br/
