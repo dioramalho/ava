@@ -1,6 +1,6 @@
 const loginForm = document.getElementById('loginForm');
 const loginAlert = document.getElementById('loginAlert');
-const protectedPages = ['dashboard.html', 'dashboard-professor.html', 'professor-alunos.html'];
+const protectedPages = ['dashboard.html', 'dashboard-professor.html'];
 const currentPage = window.location.pathname.split('/').pop();
 
 if (loginForm) {
@@ -32,23 +32,14 @@ if (loginForm) {
   });
 }
 
-async function validateSession(options) {
+async function validateSession() {
   if (!protectedPages.includes(currentPage)) {
     return null;
   }
 
-  const config = options || {};
-
   try {
     const response = await apiRequest('/auth/me');
-    const user = response.data || null;
-
-    if (config.requiredProfile && user && user.perfil !== config.requiredProfile) {
-      window.location.href = 'dashboard.html';
-      return null;
-    }
-
-    return user;
+    return response.data;
   } catch (error) {
     window.location.href = 'index.html';
     return null;
