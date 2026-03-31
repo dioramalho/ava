@@ -5,13 +5,11 @@
   }
 
   const turmaForm = document.getElementById('turmaForm');
-  const alunoForm = document.getElementById('alunoForm');
   const materiaForm = document.getElementById('materiaForm');
   const pdfForm = document.getElementById('pdfForm');
   const recadoForm = document.getElementById('recadoForm');
 
   const selectsTurma = {
-    alunoTurma: document.getElementById('alunoTurma'),
     materiaTurma: document.getElementById('materiaTurma'),
     pdfTurma: document.getElementById('pdfTurma'),
     recadoTurma: document.getElementById('recadoTurma')
@@ -22,9 +20,6 @@
     turmaAnoLetivo: document.getElementById('turmaAnoLetivo'),
     turmaTurno: document.getElementById('turmaTurno'),
     turmaDescricao: document.getElementById('turmaDescricao'),
-    alunoNome: document.getElementById('alunoNome'),
-    alunoEmail: document.getElementById('alunoEmail'),
-    alunoMatricula: document.getElementById('alunoMatricula'),
     materiaNome: document.getElementById('materiaNome'),
     materiaDescricao: document.getElementById('materiaDescricao'),
     pdfMateria: document.getElementById('pdfMateria'),
@@ -47,7 +42,7 @@
     recados: []
   };
 
-  if (!turmaForm || !alunoForm || !materiaForm || !pdfForm || !recadoForm) {
+  if (!turmaForm || !materiaForm || !pdfForm || !recadoForm) {
     return;
   }
 
@@ -55,7 +50,7 @@
 
   async function initialize() {
     try {
-      const session = await window.validatePortalSession();
+      const session = await window.validatePortalSession({ requiredProfile: 'professor' });
       if (!session) {
         return;
       }
@@ -69,7 +64,6 @@
 
   function bindEvents() {
     turmaForm.addEventListener('submit', handleTurmaSubmit);
-    alunoForm.addEventListener('submit', handleAlunoSubmit);
     materiaForm.addEventListener('submit', handleMateriaSubmit);
     pdfForm.addEventListener('submit', handlePdfSubmit);
     recadoForm.addEventListener('submit', handleRecadoSubmit);
@@ -110,24 +104,6 @@
     }
 
     await submitJson('/turmas', payload, turmaForm, 'Turma cadastrada com sucesso.');
-  }
-
-  async function handleAlunoSubmit(event) {
-    event.preventDefault();
-
-    const payload = {
-      turma_id: selectsTurma.alunoTurma.value,
-      nome: fields.alunoNome.value.trim(),
-      email: fields.alunoEmail.value.trim(),
-      matricula: fields.alunoMatricula.value.trim()
-    };
-
-    if (!payload.turma_id || !payload.nome || !payload.email || !payload.matricula) {
-      showToast('Preencha turma, nome, e-mail e matrícula do aluno.', 'warning');
-      return;
-    }
-
-    await submitJson('/alunos', payload, alunoForm, 'Aluno cadastrado com sucesso.');
   }
 
   async function handleMateriaSubmit(event) {

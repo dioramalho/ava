@@ -54,6 +54,8 @@ class App
 
         $this->get('/alunos', 'AlunoController', 'index');
         $this->post('/alunos', 'AlunoController', 'store');
+        $this->post('/alunos/update', 'AlunoController', 'update');
+        $this->post('/alunos/delete', 'AlunoController', 'destroy');
 
         $this->get('/materias', 'MateriaController', 'index');
         $this->post('/materias', 'MateriaController', 'store');
