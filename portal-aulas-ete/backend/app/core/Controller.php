@@ -29,4 +29,17 @@ class Controller
             ), 403);
         }
     }
+
+    protected function requireAluno()
+    {
+        $this->requireAuth();
+
+        $perfil = isset($_SESSION['user']['perfil']) ? $_SESSION['user']['perfil'] : '';
+        if ($perfil !== 'aluno') {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Acesso permitido apenas para aluno.'
+            ), 403);
+        }
+    }
 }

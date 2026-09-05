@@ -2,17 +2,26 @@ const API_BASE_URL = 'backend/public/index.php?route=';
 
 async function apiRequest(route, options) {
   const requestOptions = options || {};
+  const isFormData = typeof FormData !== 'undefined' && requestOptions.body instanceof FormData;
   const finalOptions = {
     method: requestOptions.method || 'GET',
     credentials: 'same-origin',
-    headers: requestOptions.headers || {}
+    headers: isFormData ? {} : (requestOptions.headers || {})
   };
 
   if (requestOptions.body) {
     finalOptions.body = requestOptions.body;
   }
 
-  const response = await fetch(API_BASE_URL + route, finalOptions);
+  const qPos = route.indexOf('?');
+  let path = route;
+  let extraQuery = '';
+  if (qPos !== -1) {
+    path = route.slice(0, qPos);
+    extraQuery = '&' + route.slice(qPos + 1);
+  }
+
+  const response = await fetch(API_BASE_URL + path + extraQuery, finalOptions);
   const data = await response.json().catch(function () {
     return {
       success: false,
@@ -28,4 +37,14 @@ async function apiRequest(route, options) {
   }
 
   return data;
+}
+
+function escapeHtml(value) {
+  const text = value === null || value === undefined ? '' : String(value);
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }

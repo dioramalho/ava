@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal ETE | Nova aula</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="ete-app-shell">
+    <div class="ete-stripes"><span class="s-y"></span><span class="s-g"></span><span class="s-r"></span></div>
+    <nav class="navbar navbar-expand-lg ete-navbar sticky-top">
+      <div class="container-xxl">
+        <a class="navbar-brand d-flex align-items-center gap-3" href="dashboard-professor.html">
+          <img src="assets/logo-ete.png" alt="ETE — Escola Técnica Estadual" class="ete-logo-nav" />
+          <span class="d-none d-md-block fw-bold">Portal de Aulas</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navProf" aria-controls="navProf" aria-expanded="false" aria-label="Abrir menu">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navProf">
+          <ul class="navbar-nav ms-auto align-items-lg-center gap-1 mt-3 mt-lg-0">
+            <li class="nav-item"><a class="nav-link" href="dashboard-professor.html">Painel</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-turmas.html">Turmas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-disciplinas.html">Disciplinas</a></li>
+            <li class="nav-item"><a class="nav-link active" href="professor-aulas.html">Aulas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-alunos.html">Alunos</a></li>
+            <li class="nav-item ms-lg-2"><button id="logoutBtn" class="btn btn-sm btn-outline-light btn-touch">Sair</button></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container-xxl py-4 py-md-5">
+      <section class="ete-page-hero mb-4">
+        <h1 class="h3 fw-bold mb-2">Nova aula</h1>
+        <p class="mb-0" style="opacity: 0.9">Título, vínculo e material. Salvar publica na hora para a turma escolhida.</p>
+      </section>
+
+      <article class="ete-card p-4 p-md-5">
+        <div id="avisoVinculo" class="alert alert-warning d-none">Cadastre pelo menos uma turma e uma disciplina antes de publicar uma aula.</div>
+        <form id="aulaForm" class="row g-4">
+          <input type="hidden" id="aulaId" />
+          <div class="col-12">
+            <label class="form-label fw-semibold" for="aulaTitulo">Título</label>
+            <input id="aulaTitulo" class="form-control" placeholder="Ex.: Introdução a HTML" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold" for="aulaTurma">Turma</label>
+            <select id="aulaTurma" class="form-select" required>
+              <option value="">Selecione a turma</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold" for="aulaDisciplina">Disciplina</label>
+            <select id="aulaDisciplina" class="form-select" required>
+              <option value="">Selecione a disciplina</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <h2 class="h6 fw-bold text-ete-primary mb-3">Vídeos do YouTube</h2>
+            <div id="videoList">
+              <input class="form-control mb-2 js-video" type="url" placeholder="https://www.youtube.com/watch?v=..." />
+              <input class="form-control mb-2 js-video" type="url" placeholder="Outro link (opcional)" />
+            </div>
+            <button type="button" id="addVideoBtn" class="btn btn-link px-0 fw-semibold" style="color: var(--ete-navy)">+ Adicionar outro vídeo</button>
+          </div>
+
+          <div class="col-12">
+            <h2 class="h6 fw-bold text-ete-primary mb-3">Arquivos (PDF ou DOCX)</h2>
+            <div id="arquivosAtuais"></div>
+            <div class="ete-dropzone">
+              <i class="bi bi-cloud-arrow-up fs-3 d-block mb-2"></i>
+              <p class="mb-2">Anexe um ou mais arquivos. Formatos: PDF e DOCX.</p>
+              <input id="aulaArquivos" class="form-control" type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" multiple />
+            </div>
+          </div>
+
+          <div class="col-12 d-flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-ete-primary btn-touch px-4">Salvar e publicar</button>
+            <a href="professor-aulas.html" class="btn btn-outline-secondary btn-touch">Cancelar</a>
+          </div>
+        </form>
+      </article>
+    </main>
+    <footer class="ete-footer py-3 text-center small">Escola Técnica Estadual — Portal de Aulas</footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="js/api.js?v=3"></script>
+    <script src="js/session.js?v=3"></script>
+    <script src="js/professor-aula.js?v=3"></script>
+  </body>
+</html>

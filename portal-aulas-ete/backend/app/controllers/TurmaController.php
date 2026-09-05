@@ -4,7 +4,7 @@ class TurmaController extends Controller
 {
     public function index()
     {
-        $this->requireAuth();
+        $this->requireProfessor();
         $model = new Turma();
 
         $this->json(array(
@@ -15,26 +15,29 @@ class TurmaController extends Controller
 
     public function store(Request $request)
     {
-        $this->requireAuth();
+        $this->requireProfessor();
 
-        $nome = $request->input('nome', '');
-        $anoLetivo = $request->input('ano_letivo', '');
-        $turno = $request->input('turno', '');
-        $descricao = $request->input('descricao', '');
+        $codigo = strtoupper($request->input('codigo', ''));
+        $titulo = $request->input('titulo', '');
 
-        if ($nome === '' || $anoLetivo === '' || $turno === '') {
+        if ($codigo === '' || $titulo === '') {
             $this->json(array(
                 'success' => false,
-                'message' => 'Nome, ano letivo e turno são obrigatórios.'
+                'message' => 'Código e título são obrigatórios.'
             ), 422);
         }
 
         $model = new Turma();
+        if ($model->findByCodigo($codigo, 0)) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Já existe uma turma com este código.'
+            ), 409);
+        }
+
         $id = $model->create(array(
-            'nome' => $nome,
-            'ano_letivo' => $anoLetivo,
-            'turno' => $turno,
-            'descricao' => $descricao
+            'codigo' => $codigo,
+            'titulo' => $titulo
         ));
 
         $this->json(array(
@@ -42,5 +45,46 @@ class TurmaController extends Controller
             'message' => 'Turma cadastrada com sucesso.',
             'id' => (int) $id
         ), 201);
+    }
+
+    public function update(Request $request)
+    {
+        $this->requireProfessor();
+
+        $id = (int) $request->input('id', 0);
+        $codigo = strtoupper($request->input('codigo', ''));
+        $titulo = $request->input('titulo', '');
+
+        if ($id <= 0 || $codigo === '' || $titulo === '') {
+            $this->json(array(
+                'success' => false,
+                'message' => 'ID, código e título são obrigatórios.'
+            ), 422);
+        }
+
+        $model = new Turma();
+        if (!$model->findById($id)) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Turma não encontrada.'
+            ), 404);
+        }
+
+        if ($model->findByCodigo($codigo, $id)) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Já existe uma turma com este código.'
+            ), 409);
+        }
+
+        $model->update($id, array(
+            'codigo' => $codigo,
+            'titulo' => $titulo
+        ));
+
+        $this->json(array(
+            'success' => true,
+            'message' => 'Turma atualizada com sucesso.'
+        ), 200);
     }
 }

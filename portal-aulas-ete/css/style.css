@@ -1,58 +1,80 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap");
+
 :root {
-  --ete-blue: #2e3192;
+  --ete-navy: #0b2f6b;
+  --ete-navy-deep: #071e47;
+  --ete-navy-mid: #123a80;
   --ete-white: #ffffff;
-  --ete-yellow: #ffd400;
-  --ete-green: #009846;
-  --ete-red: #ed1c24;
-  --ete-light-gray: #f5f5f5;
+  --ete-yellow: #f5c400;
+  --ete-green: #1b7a3d;
+  --ete-red: #c4122f;
+  --ete-surface: #eef2f8;
+  --ete-card: #ffffff;
+  --ete-text: #14233d;
+  --ete-muted: #5b6b86;
+  --ete-line: #d5deeb;
+  --ete-radius: 1rem;
+  --ete-shadow: 0 12px 32px rgba(7, 30, 71, 0.12);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Barlow", "Segoe UI", sans-serif;
+  color: var(--ete-text);
+  background: var(--ete-surface);
 }
 
 .bg-ete-light {
-  background-color: var(--ete-light-gray);
+  background-color: var(--ete-surface);
 }
 
 .text-ete-primary {
-  color: var(--ete-blue) !important;
+  color: var(--ete-navy) !important;
 }
 
 .btn-ete-primary {
-  background-color: var(--ete-blue);
-  border-color: var(--ete-blue);
+  background-color: var(--ete-navy);
+  border-color: var(--ete-navy);
   color: var(--ete-white);
+  font-weight: 600;
 }
 
 .btn-ete-primary:hover,
 .btn-ete-primary:focus {
-  background-color: #22256e;
-  border-color: #22256e;
+  background-color: var(--ete-navy-deep);
+  border-color: var(--ete-navy-deep);
   color: var(--ete-white);
 }
 
-.ete-logo {
-  width: 180px;
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
+.btn-ete-yellow {
+  background-color: var(--ete-yellow);
+  border-color: var(--ete-yellow);
+  color: var(--ete-navy-deep);
+  font-weight: 700;
 }
 
-.ete-logo-sm {
-  width: 58px;
-  height: auto;
-  border-radius: 0.4rem;
+.btn-ete-yellow:hover,
+.btn-ete-yellow:focus {
+  background-color: #e0b400;
+  border-color: #e0b400;
+  color: var(--ete-navy-deep);
 }
 
-.subject-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border-top: 4px solid var(--ete-blue);
+.btn-ete-green {
+  background-color: var(--ete-green);
+  border-color: var(--ete-green);
+  color: var(--ete-white);
+  font-weight: 600;
 }
 
-.subject-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 0.75rem 1.5rem rgba(46, 49, 146, 0.15) !important;
+.btn-ete-green:hover,
+.btn-ete-green:focus {
+  background-color: #156432;
+  border-color: #156432;
+  color: var(--ete-white);
 }
 
 .btn-touch {
@@ -62,8 +84,238 @@ body {
   justify-content: center;
 }
 
-@media (max-width: 576px) {
-  .navbar-brand small {
-    font-size: 0.72rem;
+.ete-logo {
+  width: 280px;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.ete-logo-nav {
+  height: 52px;
+  width: auto;
+  max-width: 220px;
+  object-fit: contain;
+  background: var(--ete-white);
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.55rem;
+}
+
+.ete-stripes {
+  display: flex;
+  flex-direction: column;
+  height: 12px;
+}
+
+.ete-stripes span {
+  flex: 1;
+  display: block;
+}
+
+.ete-stripes .s-y {
+  background: var(--ete-yellow);
+}
+
+.ete-stripes .s-g {
+  background: var(--ete-green);
+}
+
+.ete-stripes .s-r {
+  background: var(--ete-red);
+}
+
+.ete-navbar {
+  background: var(--ete-navy);
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.ete-navbar .navbar-brand {
+  color: var(--ete-white);
+}
+
+.ete-navbar .nav-link {
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 600;
+  padding: 0.45rem 0.8rem !important;
+  border-radius: 0.5rem;
+}
+
+.ete-navbar .nav-link:hover,
+.ete-navbar .nav-link.active {
+  color: var(--ete-navy-deep);
+  background: var(--ete-yellow);
+}
+
+.ete-navbar .navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.ete-navbar .navbar-toggler-icon {
+  filter: invert(1);
+}
+
+.ete-app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ete-app-shell main {
+  flex: 1;
+}
+
+.ete-page-hero {
+  background: linear-gradient(135deg, var(--ete-navy) 0%, var(--ete-navy-mid) 100%);
+  color: var(--ete-white);
+  border-radius: var(--ete-radius);
+  padding: 1.5rem 1.75rem;
+  box-shadow: var(--ete-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.ete-page-hero::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 160px;
+  height: 160px;
+  border: 18px solid rgba(245, 196, 0, 0.18);
+  border-radius: 50%;
+}
+
+.ete-card {
+  background: var(--ete-card);
+  border: 1px solid var(--ete-line);
+  border-radius: var(--ete-radius);
+  box-shadow: 0 8px 20px rgba(7, 30, 71, 0.06);
+}
+
+.ete-stat {
+  border-top: 4px solid var(--ete-navy);
+}
+
+.ete-stat .ete-stat-value {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--ete-navy);
+  line-height: 1;
+}
+
+.ete-badge-pending {
+  background: #fff4cc;
+  color: #8a6d00;
+  font-weight: 700;
+}
+
+.ete-badge-ok {
+  background: #e5f6eb;
+  color: var(--ete-green);
+  font-weight: 700;
+}
+
+.ete-request-card {
+  border-left: 4px solid var(--ete-yellow);
+}
+
+.ete-table thead th {
+  background: var(--ete-navy);
+  color: var(--ete-white);
+  font-weight: 600;
+  border: none;
+}
+
+.ete-dropzone {
+  border: 2px dashed var(--ete-line);
+  border-radius: 0.85rem;
+  background: #f7f9fd;
+  padding: 1.25rem;
+  text-align: center;
+  color: var(--ete-muted);
+}
+
+.ete-auth {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+}
+
+.ete-auth-brand {
+  background: linear-gradient(165deg, var(--ete-navy-deep) 0%, var(--ete-navy) 55%, var(--ete-navy-mid) 100%);
+  color: var(--ete-white);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 4rem;
+}
+
+.ete-auth-brand h1 {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.ete-auth-panel {
+  background: var(--ete-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+}
+
+.ete-auth-box {
+  width: 100%;
+  max-width: 420px;
+}
+
+.form-control,
+.form-select {
+  border-color: var(--ete-line);
+  min-height: 48px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--ete-navy);
+  box-shadow: 0 0 0 0.2rem rgba(11, 47, 107, 0.15);
+}
+
+.ete-footer {
+  background: var(--ete-navy-deep);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.ete-video {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 0.85rem;
+  background: #000;
+}
+
+.ete-video iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+@media (max-width: 991.98px) {
+  .ete-auth {
+    grid-template-columns: 1fr;
+  }
+
+  .ete-auth-brand {
+    padding: 2rem 1.5rem 1.5rem;
+    min-height: auto;
+  }
+
+  .ete-logo-nav {
+    height: 44px;
   }
 }
