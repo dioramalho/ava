@@ -48,23 +48,27 @@ class App
         $this->post('/auth/login', 'AuthController', 'login');
         $this->post('/auth/logout', 'AuthController', 'logout');
         $this->get('/auth/me', 'AuthController', 'me');
+        $this->post('/auth/cadastro-aluno', 'AuthController', 'cadastroAluno');
+
+        $this->get('/professor/painel', 'ProfessorController', 'painel');
+        $this->get('/aluno/painel', 'AlunoPortalController', 'painel');
 
         $this->get('/turmas', 'TurmaController', 'index');
         $this->post('/turmas', 'TurmaController', 'store');
+        $this->post('/turmas/update', 'TurmaController', 'update');
+
+        $this->get('/disciplinas', 'DisciplinaController', 'index');
+        $this->post('/disciplinas', 'DisciplinaController', 'store');
+
+        $this->get('/aulas', 'AulaController', 'index');
+        $this->get('/aulas/detalhe', 'AulaController', 'show');
+        $this->post('/aulas', 'AulaController', 'store');
+        $this->post('/aulas/update', 'AulaController', 'update');
 
         $this->get('/alunos', 'AlunoController', 'index');
-        $this->post('/alunos', 'AlunoController', 'store');
-        $this->post('/alunos/update', 'AlunoController', 'update');
-        $this->post('/alunos/delete', 'AlunoController', 'destroy');
-
-        $this->get('/materias', 'MateriaController', 'index');
-        $this->post('/materias', 'MateriaController', 'store');
-
-        $this->get('/recados', 'RecadoController', 'index');
-        $this->post('/recados', 'RecadoController', 'store');
-
-        $this->get('/documentos', 'DocumentoController', 'index');
-        $this->post('/documentos', 'DocumentoController', 'store');
+        $this->get('/alunos/pendentes', 'AlunoController', 'pendentes');
+        $this->post('/alunos/aprovar', 'AlunoController', 'aprovar');
+        $this->post('/alunos/recusar', 'AlunoController', 'recusar');
     }
 
     private function get($route, $controller, $action)

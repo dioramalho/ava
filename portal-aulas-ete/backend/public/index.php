@@ -18,12 +18,12 @@ try {
     $app = new App($request);
     $app->run();
 } catch (Exception $exception) {
+    error_log('Portal API: ' . $exception->getMessage());
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(array(
         'success' => false,
-        'message' => 'Erro interno ao processar a requisição.',
-        'error' => $exception->getMessage()
+        'message' => 'Erro interno ao processar a requisição.'
     ));
     exit;
 }

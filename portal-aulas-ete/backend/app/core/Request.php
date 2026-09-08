@@ -23,7 +23,11 @@ class Request
 
     public function input($key, $defaultValue)
     {
-        return isset($this->body[$key]) ? trim($this->body[$key]) : $defaultValue;
+        if (!isset($this->body[$key]) || is_array($this->body[$key])) {
+            return $defaultValue;
+        }
+
+        return trim((string) $this->body[$key]);
     }
 
     public function query($key, $defaultValue)
@@ -34,6 +38,47 @@ class Request
     public function file($key)
     {
         return isset($_FILES[$key]) ? $_FILES[$key] : null;
+    }
+
+    /**
+     * Normaliza input file simples ou arquivos[].
+     *
+     * @return array
+     */
+    public function files($key)
+    {
+        if (!isset($_FILES[$key])) {
+            return array();
+        }
+
+        $bag = $_FILES[$key];
+
+        if (!isset($bag['name']) || !is_array($bag['name'])) {
+            if (empty($bag['name']) || (isset($bag['error']) && (int) $bag['error'] === UPLOAD_ERR_NO_FILE)) {
+                return array();
+            }
+
+            return array($bag);
+        }
+
+        $list = array();
+        $total = count($bag['name']);
+
+        for ($i = 0; $i < $total; $i++) {
+            if ((int) $bag['error'][$i] === UPLOAD_ERR_NO_FILE) {
+                continue;
+            }
+
+            $list[] = array(
+                'name' => $bag['name'][$i],
+                'type' => $bag['type'][$i],
+                'tmp_name' => $bag['tmp_name'][$i],
+                'error' => $bag['error'][$i],
+                'size' => $bag['size'][$i]
+            );
+        }
+
+        return $list;
     }
 
     public function all()

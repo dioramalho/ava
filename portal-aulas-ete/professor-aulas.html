@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portal ETE | Alunos</title>
+    <title>Portal ETE | Aulas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="css/style.css" />
@@ -24,8 +24,8 @@
             <li class="nav-item"><a class="nav-link" href="dashboard-professor.html">Painel</a></li>
             <li class="nav-item"><a class="nav-link" href="professor-turmas.html">Turmas</a></li>
             <li class="nav-item"><a class="nav-link" href="professor-disciplinas.html">Disciplinas</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-aulas.html">Aulas</a></li>
-            <li class="nav-item"><a class="nav-link active" href="professor-alunos.html">Alunos</a></li>
+            <li class="nav-item"><a class="nav-link active" href="professor-aulas.html">Aulas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-alunos.html">Alunos</a></li>
             <li class="nav-item ms-lg-2"><button id="logoutBtn" class="btn btn-sm btn-outline-light btn-touch">Sair</button></li>
           </ul>
         </div>
@@ -33,48 +33,49 @@
     </nav>
 
     <main class="container-xxl py-4 py-md-5">
-      <section class="ete-page-hero mb-4">
-        <h1 class="h3 fw-bold mb-2">Alunos</h1>
-        <p class="mb-0" style="opacity: 0.9">Na v1 cada aluno pertence a uma única turma. Aprove o pedido e escolha a turma no mesmo passo.</p>
+      <section class="ete-page-hero mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+          <h1 class="h3 fw-bold mb-2">Aulas</h1>
+          <p class="mb-0" style="opacity: 0.9">Cada aula nasce ligada a uma turma e a uma disciplina. Ao salvar, já fica visível para o aluno.</p>
+        </div>
+        <a href="professor-aula.html" class="btn btn-ete-yellow btn-touch">Nova aula</a>
       </section>
 
-      <section class="mb-4">
-        <article class="ete-card p-4">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="h5 fw-bold mb-0">Pedidos pendentes</h2>
-            <span class="badge ete-badge-pending" id="badgePendentes">0</span>
+      <article class="ete-card p-3 p-md-4">
+        <div class="row g-2 mb-3">
+          <div class="col-md-4">
+            <select class="form-select" id="filtroTurma" aria-label="Filtrar por turma">
+              <option value="">Todas as turmas</option>
+            </select>
           </div>
-          <div class="d-grid gap-3" id="pendentesWrap">
-            <p class="text-muted mb-0">Carregando...</p>
+          <div class="col-md-4">
+            <select class="form-select" id="filtroDisciplina" aria-label="Filtrar por disciplina">
+              <option value="">Todas as disciplinas</option>
+            </select>
           </div>
-        </article>
-      </section>
-
-      <section>
-        <article class="ete-card p-4">
-          <h2 class="h5 fw-bold mb-3">Alunos com acesso</h2>
-          <div class="table-responsive">
-            <table class="table ete-table align-middle mb-0">
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Contato</th>
-                  <th>Turma</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="alunosTableBody">
-                <tr><td colspan="4" class="text-muted">Carregando...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </article>
-      </section>
+        </div>
+        <div class="table-responsive">
+          <table class="table ete-table align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Aula</th>
+                <th>Turma</th>
+                <th>Disciplina</th>
+                <th>Material</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="aulasTableBody">
+              <tr><td colspan="5" class="text-muted">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
     </main>
     <footer class="ete-footer py-3 text-center small">Escola Técnica Estadual — Portal de Aulas</footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="js/api.js?v=3"></script>
     <script src="js/session.js?v=3"></script>
-    <script src="js/professor-alunos.js?v=3"></script>
+    <script src="js/professor-aulas.js?v=3"></script>
   </body>
 </html>
