@@ -23,17 +23,24 @@ class Database
             return self::$connection;
         }
 
+        $charset = isset($db['charset']) ? $db['charset'] : 'utf8mb4';
         $dsn = sprintf(
             'mysql:host=%s;port=%s;dbname=%s;charset=%s',
             $db['host'],
             $db['port'],
             $db['dbname'],
-            $db['charset']
+            $charset
         );
 
-        self::$connection = new PDO($dsn, $db['username'], $db['password']);
-        self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        self::$connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $names = 'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci';
+        $options = array(
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::MYSQL_ATTR_INIT_COMMAND => $names
+        );
+
+        self::$connection = new PDO($dsn, $db['username'], $db['password'], $options);
+        self::$connection->exec($names);
 
         return self::$connection;
     }

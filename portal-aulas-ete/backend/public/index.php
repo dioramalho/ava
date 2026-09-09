@@ -24,6 +24,6 @@ try {
     echo json_encode(array(
         'success' => false,
         'message' => 'Erro interno ao processar a requisição.'
-    ));
+    ), JSON_UNESCAPED_UNICODE);
     exit;
 }

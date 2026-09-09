@@ -44,6 +44,23 @@ class User extends BaseModel
         return $statement->fetch();
     }
 
+    public function findByIdWithTurma($id)
+    {
+        $statement = $this->connection->prepare(
+            'SELECT usuarios.id, usuarios.nome, usuarios.login, usuarios.perfil,
+                    usuarios.email, usuarios.celular, usuarios.status, usuarios.turma_id,
+                    turmas.codigo AS turma_codigo, turmas.titulo AS turma_titulo
+             FROM usuarios
+             LEFT JOIN turmas ON turmas.id = usuarios.turma_id
+             WHERE usuarios.id = :id
+             LIMIT 1'
+        );
+        $statement->bindValue(':id', (int) $id, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetch();
+    }
+
     public function createAlunoPendente($data)
     {
         $statement = $this->connection->prepare(
