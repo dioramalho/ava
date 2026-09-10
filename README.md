@@ -294,10 +294,10 @@ Referência completa de payloads: [`portal-aulas-ete/backend/README.md`](./porta
 
 Workflow: [`.github/workflows/main.yml`](./.github/workflows/main.yml)
 
-- **Trigger:** push na branch `develop`
-- **Ação:** FTP Deploy de `./portal-aulas-ete/` para `/public_html/ava.dev.diogoramalho.com.br/`
+- **Trigger:** push na branch `develop` ou disparo manual (`workflow_dispatch`)
+- **Ação:** FTPS explícito (porta 21, IPv4) de `./portal-aulas-ete/` para `/public_html/ava.dev.diogoramalho.com.br/`
 - **Secrets:** `FTP_USERNAME`, `FTP_PASSWORD`
-- **`dangerous-clean-slate: true`** — limpa o diretório remoto a cada deploy
+- **Espelho com `--delete`** — remove no remoto o que não existe no local
 - **Exclusões:** `.git*`, `node_modules`, `.github`, `backend/storage/uploads/**` (uploads preservados)
 
 ---
