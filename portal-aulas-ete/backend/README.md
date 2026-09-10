@@ -346,6 +346,20 @@ Ver seção [Upload](#upload-de-documentos).
 
 ---
 
+## Teste de impacto do Composer
+
+Compara o autoload do Composer com o `Autoloader.php` interno (classes + respostas HTTP da API):
+
+```bash
+cd portal-aulas-ete/backend
+composer install
+php scripts/composer_impact_check.php
+```
+
+Saída esperada: `RESULTADO: nenhum impacto funcional detectado.`
+
+---
+
 ## Como testar a API rapidamente
 
 Com o servidor em `http://127.0.0.1:8000`:
