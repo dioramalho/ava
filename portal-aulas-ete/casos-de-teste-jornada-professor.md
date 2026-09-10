@@ -8,6 +8,8 @@ Plano para validar a jornada definida com o Product Owner: um professor pré-cad
 
 **Ambiente:** `http://localhost/ava/portal-aulas-ete/` (Apache/XAMPP) ou `php -S` apontando para `portal-aulas-ete`.
 
+O Composer (`portal-aulas-ete/backend`) só afeta o autoload PHP. Sem `vendor/`, a API usa `Autoloader.php`. Este plano não muda por causa do Composer.
+
 **Prioridade:** P0 bloqueia release · P1 fluxo principal · P2 qualidade / borda.
 
 ---

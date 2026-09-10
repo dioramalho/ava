@@ -1,9 +1,10 @@
 # Portal de Aulas — TDS
 
-Front-end e ponto de entrada da aplicação AVA para as turmas **TDS 2024** e **TDS 2025**.
+Front-end e ponto de entrada da aplicação AVA para as turmas **TDS**.
 
 Documentação geral do repositório: [`../README.md`](../README.md).  
-Documentação da API: [`backend/README.md`](./backend/README.md).
+Documentação da API e do Composer: [`backend/README.md`](./backend/README.md).  
+Casos de teste: [`casos-de-teste-jornada-professor.md`](./casos-de-teste-jornada-professor.md) e [`casos-de-teste-jornada-aluno.md`](./casos-de-teste-jornada-aluno.md).
 
 ---
 
@@ -25,10 +26,11 @@ Documentação da API: [`backend/README.md`](./backend/README.md).
 
 Organizar e exibir:
 
-- Materiais em **PDF** por turma e matéria
-- **Recados** por turma
-- Cadastros do professor (turmas, matérias, documentos, recados)
-- Gestão de **alunos** (matrículas) pelo professor
+- **Aulas** por turma e disciplina (YouTube + PDF/DOCX)
+- Cadastros do professor (turmas, disciplinas, aulas)
+- Pedido de acesso do aluno e **aprovação** pelo professor (uma turma)
+
+Recados e matérias/documentos da versão anterior ficaram fora do escopo v1.
 
 ---
 
@@ -36,51 +38,64 @@ Organizar e exibir:
 
 ```text
 portal-aulas-ete/
-├── index.html                  # Login
-├── cadastro-aluno.html         # Auto-cadastro (em evolução)
-├── dashboard.html              # Área do aluno
-├── dashboard-professor.html    # Área do professor
-├── professor-alunos.html       # CRUD de alunos
+├── index.html
+├── cadastro-aluno.html
+├── cadastro-enviado.html
+├── dashboard.html
+├── aluno-aulas.html
+├── aluno-aula.html
+├── aluno-aguardando.html
+├── aluno-recusado.html
+├── dashboard-professor.html
+├── professor-turmas.html
+├── professor-disciplinas.html
+├── professor-aulas.html
+├── professor-aula.html
+├── professor-alunos.html
 ├── css/style.css
-├── js/
-│   ├── api.js                  # Cliente HTTP da API
-│   ├── session.js              # Login / logout / guarda de sessão
-│   ├── student.js
-│   ├── professor.js
-│   └── professor-alunos.js
+├── js/                    # sem bundler/npm
 ├── assets/
-│   ├── logo.svg
-│   └── pdf/                    # PDFs do seed
-├── components/                 # navbar/footer (ainda não acoplados)
-├── backend/                    # API PHP MVC
+├── components/            # snippets ainda não acoplados
+├── backend/               # API PHP + Composer (classmap)
+├── casos-de-teste-jornada-aluno.md
+├── casos-de-teste-jornada-professor.md
 └── README.md
 ```
 
-Não há bundler, npm nem build step: abra os HTML servidos por PHP/Apache.
+O front não usa npm. O **Composer** vale só para o backend (`backend/composer.json`). Sem `backend/vendor/`, a API usa `backend/app/core/Autoloader.php`.
 
 ---
 
 ## Como usar
 
-1. Suba o servidor na raiz do portal (a partir da raiz do repo):
+1. (Opcional, PHP 7.2.5+ no CLI) instale o autoload do Composer:
+
+   ```bash
+   cd portal-aulas-ete/backend
+   composer install
+   ```
+
+   Em XAMPP 5.6 o Composer 2 não roda; pule este passo.
+
+2. Suba o servidor na raiz do portal (a partir da raiz do repo):
 
    ```bash
    php -S 127.0.0.1:8000 -t portal-aulas-ete
    ```
 
-2. Abra `http://127.0.0.1:8000/index.html`.
+3. Abra `http://127.0.0.1:8000/index.html`.
 
-3. Login padrão:
+4. Login padrão do professor:
 
    - **Login:** `professor`
    - **Senha:** `1234`
 
-4. Com sessão válida:
+5. Fluxos:
 
-   - Aluno → `dashboard.html`
-   - Professor → `dashboard-professor.html` e `professor-alunos.html`
+   - Professor → `dashboard-professor.html` (turmas, disciplinas, aulas, alunos)
+   - Aluno → pedido em `cadastro-aluno.html`; após aprovação, `dashboard.html`
 
-5. Banco:
+6. Banco:
 
    - MySQL: importe `../portal_aulas_ete.sql`
    - SQLite: ver `backend/README.md` e o README raiz (há ressalvas de configuração)
@@ -92,30 +107,32 @@ Não há bundler, npm nem build step: abra os HTML servidos por PHP/Apache.
 ### Login (`index.html`)
 
 1. Formulário envia `login` + `senha` via `POST /auth/login`.
-2. Em sucesso, o fluxo previsto redireciona para `dashboard.html`.
-3. Link “Cadastre-se” aponta para `cadastro-aluno.html`.
+2. Professor vai para `dashboard-professor.html`.
+3. Aluno aprovado vai para `dashboard.html`; pendente → `aluno-aguardando.html`; recusado → `aluno-recusado.html`.
+4. Link de cadastro aponta para `cadastro-aluno.html`.
+
+### Pedido de aluno (`cadastro-aluno.html`)
+
+- Nome, celular, e-mail, senha e confirmação. **Sem** escolha de turma.
+- `POST /auth/cadastro-aluno` → `cadastro-enviado.html`.
 
 ### Dashboard aluno (`dashboard.html`)
 
-- Valida sessão (`/auth/me`).
-- Lista recados e documentos (agrupados por matéria/turma).
-- Logout via botão → `POST /auth/logout` → `index.html`.
+- Valida sessão (`/auth/me` / `/aluno/painel`).
+- Disciplinas com aula publicada na turma do aluno.
+- Lista e detalhe: `aluno-aulas.html`, `aluno-aula.html`.
 
 ### Dashboard professor (`dashboard-professor.html`)
 
-- Exige perfil `professor` (quando a guarda de sessão estiver ativa).
-- Permite cadastrar turma, matéria, publicar recado e enviar PDF.
-- Navegação para gestão de alunos.
+- Exige perfil `professor`.
+- Atalhos para turmas, disciplinas, aulas e solicitações de alunos.
 
-### Gestão de alunos (`professor-alunos.html`)
+### Gestão do professor
 
-- CRUD completo contra `/alunos`, `/alunos/update`, `/alunos/delete`.
-- Campos: turma, nome, e-mail, matrícula.
-
-### Cadastro aluno (`cadastro-aluno.html`)
-
-- Formulário público (nome, celular, e-mail, senha).
-- Em evolução: falta consolidar JS, endpoint e mapeamento no schema (`usuarios` vs `alunos`).
+- `professor-turmas.html` — CRUD de código/título
+- `professor-disciplinas.html` — catálogo
+- `professor-aulas.html` / `professor-aula.html` — publicar aula (YouTube + arquivos)
+- `professor-alunos.html` — aprovar (escolhe a turma) ou recusar
 
 ---
 
@@ -123,11 +140,17 @@ Não há bundler, npm nem build step: abra os HTML servidos por PHP/Apache.
 
 | Arquivo | Papel |
 |---------|--------|
-| `api.js` | `API_BASE_URL = 'backend/public/index.php?route='` e `apiRequest(route, options)` |
-| `session.js` | Submit do login, logout, `validatePortalSession` (quando exportado) |
-| `student.js` | Carrega dados do aluno após validar sessão |
-| `professor.js` | Formulários e listagens do painel docente |
-| `professor-alunos.js` | CRUD de matrículas |
+| `api.js` | `API_BASE_URL = 'backend/public/index.php?route='` e `apiRequest` |
+| `session.js` | Login, logout, `validatePortalSession` |
+| `cadastro-aluno.js` | Pedido público |
+| `student.js` | Painel, lista e detalhe de aulas do aluno |
+| `professor-dashboard.js` | Painel docente |
+| `professor-turmas.js` | Turmas |
+| `professor-disciplinas.js` | Disciplinas |
+| `professor-aulas.js` | Lista de aulas |
+| `professor-aula.js` | Criar/editar aula |
+| `professor-alunos.js` | Aprovar / recusar |
+| `professor.js` | Legado; as telas atuais usam os módulos `professor-*` |
 
 ### Contrato do `apiRequest`
 
@@ -137,16 +160,12 @@ Não há bundler, npm nem build step: abra os HTML servidos por PHP/Apache.
 
 ### Guarda de sessão
 
-Padrão previsto:
-
 ```js
 const user = await window.validatePortalSession({ requiredProfile: 'professor' });
 ```
 
-- Sem sessão → redirect para `index.html`
-- Perfil incorreto → redirect para `dashboard.html`
-
-Se `validatePortalSession` estiver comentado/ausente, os dashboards quebram no `await`.
+- Sem sessão → `index.html`
+- Perfil incorreto → redireciona conforme o perfil
 
 ---
 
@@ -155,7 +174,6 @@ Se `validatePortalSession` estiver comentado/ausente, os dashboards quebram no `
 - `css/style.css` — identidade ETE (azul / amarelo / verde)
 - Bootstrap 5.3 + Bootstrap Icons via CDN
 - `assets/logo.svg` — marca
-- `assets/pdf/*.pdf` — materiais iniciais referenciados no seed
 
 `components/navbar.html` e `footer.html` existem como snippets; as páginas atuais embutem header/footer no próprio HTML.
 
@@ -175,7 +193,7 @@ await apiRequest('/auth/login', {
 });
 ```
 
-Upload de PDF (professor): `FormData` com campos `turma_id`, `materia_id`, `titulo`, `descricao` e arquivo `arquivo` → `POST /documentos`.
+Publicação de aula: `FormData` com `titulo`, `turma_id`, `disciplina_id`, `videos` e `arquivos[]` → `POST /aulas`.
 
 ---
 
@@ -183,21 +201,20 @@ Upload de PDF (professor): `FormData` com campos `turma_id`, `materia_id`, `titu
 
 | Perfil | Telas típicas | Observação |
 |--------|---------------|------------|
-| `professor` | dashboards + alunos | Único perfil seedado |
-| `aluno` | `dashboard.html` | Conta em `usuarios`; distinto da tabela `alunos` |
+| `professor` | dashboards e telas `professor-*` | Seed: `professor` / `1234` |
+| `aluno` | dashboard e aulas | Conta em `usuarios`; `status` e `turma_id` |
 | público | login, cadastro | Sem sessão |
 
-A API reforça `requireProfessor()` nas rotas de alunos; a UI não deve chamar `/alunos*` sem perfil professor.
+A API reforça `requireProfessor()` / `requireAluno()` nas rotas correspondentes.
 
 ---
 
 ## Pontos de atenção
 
-- Redirect pós-login e validação de sessão em `js/session.js` podem estar desabilitados temporariamente (debug).
-- README antigo citava `js/auth.js` — o arquivo real é `js/session.js`.
-- Auto-cadastro ainda não fecha o ciclo front ↔ API ↔ banco.
-- Senhas em `sha1` — adequado só ao escopo pedagógico atual.
-- Backend PHP 5.6: detalhes em [`backend/README.md`](./backend/README.md).
+- Redirect e validação de sessão dependem de `js/session.js`.
+- `js/professor.js` não é o script das páginas atuais.
+- Composer no backend não altera o front; impacto do autoload: `backend/scripts/composer_impact_check.php`.
+- Seed do professor ainda usa hash `sha1`; pedidos novos usam bcrypt quando o PHP oferece `password_hash`.
 
 ---
 
