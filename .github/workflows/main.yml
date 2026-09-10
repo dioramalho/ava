@@ -9,10 +9,27 @@ on:
 jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Check FTP IPv4 port 21
+        run: |
+          python3 - <<'PY'
+          import socket, sys
+          sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+          sock.settimeout(15)
+          try:
+              sock.connect(("38.226.110.12", 21))
+              print("tcp21_ipv4_ok")
+          except Exception as exc:
+              print("tcp21_ipv4_fail", exc)
+              sys.exit(1)
+          finally:
+              sock.close()
+          PY
 
       - name: Install lftp
         run: sudo apt-get update && sudo apt-get install -y lftp
@@ -22,17 +39,18 @@ jobs:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
-          lftp -u "$FTP_USERNAME","$FTP_PASSWORD" -p 21 ftp://ftp.diogoramalho.com.br -e "
-            set ssl:verify-certificate no;
-            set ftp:ssl-force true;
-            set ftp:ssl-protect-data true;
-            set ftp:passive-mode true;
-            set dns:order inet;
-            set net:timeout 30;
-            set net:max-retries 5;
-            set net:reconnect-interval-base 5;
-            lcd portal-aulas-ete;
-            cd /public_html/ava.dev.diogoramalho.com.br/;
-            mirror -R --verbose --delete --parallel=3 --exclude-glob .git* --exclude-glob node_modules/** --exclude-glob .github/** --exclude-glob backend/storage/uploads/**;
-            bye
-          "
+          lftp <<EOF
+          set dns:order inet
+          set ssl:verify-certificate no
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ftp:passive-mode true
+          set net:timeout 20
+          set net:max-retries 3
+          set net:reconnect-interval-base 5
+          open -u "$FTP_USERNAME","$FTP_PASSWORD" ftp://ftp.diogoramalho.com.br:21
+          lcd portal-aulas-ete
+          cd /public_html/ava.dev.diogoramalho.com.br/
+          mirror -R --verbose --delete --parallel=3 --exclude-glob .git* --exclude-glob node_modules/** --exclude-glob .github/** --exclude-glob backend/storage/uploads/**
+          bye
+          EOF
