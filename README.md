@@ -52,13 +52,13 @@ O código da aplicação vive em [`portal-aulas-ete/`](./portal-aulas-ete/). Est
 | Camada | Tecnologia |
 |--------|------------|
 | Frontend | HTML estático, CSS, Bootstrap 5.3, Bootstrap Icons (CDN), JavaScript vanilla |
-| Backend | PHP 5.6, MVC próprio (sem framework, sem Composer), PDO |
+| Backend | PHP 5.6, MVC próprio (sem framework), Composer (autoload classmap), PDO |
 | API | JSON via `fetch`, sessão PHP (`$_SESSION`) |
 | Banco | MySQL/MariaDB (`portal_aulas_ete.sql`) ou SQLite (schema em `backend/config/sqlite_schema.sql`) |
 | Senhas | `sha1` (escolha pedagógica do projeto; não usar em produção real) |
 | CI/CD | GitHub Actions → FTP (`develop`) |
 
-**Compatibilidade PHP 5.6:** sem typed properties, sem nullsafe, sem Composer. Preferir `array()`, classes clássicas e sintaxe compatível.
+**Compatibilidade PHP 5.6:** sem typed properties e sem nullsafe. Preferir `array()`, classes clássicas e sintaxe compatível. O Composer gerencia o autoload (`classmap`); em ambientes sem `vendor/` o `Autoloader.php` continua como fallback.
 
 ---
 
@@ -82,6 +82,8 @@ ava/
     ├── components/                    # Snippets (ainda não integrados nas páginas)
     ├── README.md
     └── backend/
+        ├── composer.json              # Dependências e autoload (classmap)
+        ├── composer.lock
         ├── public/index.php           # Front controller da API
         ├── public/.htaccess
         ├── config/config.php
@@ -103,6 +105,13 @@ Na raiz do repositório:
 
 ```bash
 php -S 127.0.0.1:8000 -t portal-aulas-ete
+```
+
+No backend, instale as dependências do Composer (opcional se for usar o autoloader interno):
+
+```bash
+cd portal-aulas-ete/backend
+composer install
 ```
 
 Abra: [http://127.0.0.1:8000/index.html](http://127.0.0.1:8000/index.html)
@@ -161,7 +170,7 @@ Browser (HTML/JS)
 js/api.js  →  backend/public/index.php?route=/auth/login
     │
     ▼
-session_start + CORS + Autoloader
+session_start + CORS + Composer autoload (ou Autoloader)
     │
     ▼
 App → Controller → Model (PDO) → MySQL/SQLite
@@ -298,7 +307,7 @@ Workflow: [`.github/workflows/main.yml`](./.github/workflows/main.yml)
 - **Ação:** FTPS explícito (porta 21, IPv4) de `./portal-aulas-ete/` para `/public_html/ava.dev.diogoramalho.com.br/`
 - **Secrets:** `FTP_USERNAME`, `FTP_PASSWORD`
 - **Espelho com `--delete`** — remove no remoto o que não existe no local
-- **Exclusões:** `.git*`, `node_modules`, `.github`, `backend/storage/uploads/**` (uploads preservados)
+- **Exclusões:** `.git*`, `node_modules`, `.github`, `backend/vendor/**`, `backend/storage/uploads/**` (uploads preservados)
 
 ---
 
@@ -315,7 +324,7 @@ Workflow: [`.github/workflows/main.yml`](./.github/workflows/main.yml)
 ## Convenções e restrições
 
 1. Manter sintaxe **PHP 5.6**.
-2. Não introduzir Composer/npm/build step sem decisão explícita.
+2. Dependências PHP pelo Composer em `portal-aulas-ete/backend`. Não introduzir npm/build step sem decisão explícita.
 3. Mensagens da API e UI em **PT-BR**.
 4. Endpoints de `/alunos*` exigem perfil **professor**.
 5. Upload de documentos: apenas **PDF**.
