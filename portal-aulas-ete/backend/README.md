@@ -16,10 +16,12 @@ Documentação do front: [`../README.md`](../README.md).
 5. [Camadas MVC](#camadas-mvc)
 6. [Autenticação](#autenticação)
 7. [Referência da API](#referência-da-api)
-8. [Upload de documentos](#upload-de-documentos)
+8. [Upload de aulas](#upload-de-aulas)
 9. [Códigos HTTP](#códigos-http)
 10. [Login padrão](#login-padrão)
 11. [Limitações conhecidas](#limitações-conhecidas)
+12. [Teste de impacto do Composer](#teste-de-impacto-do-composer)
+13. [Como testar a API rapidamente](#como-testar-a-api-rapidamente)
 
 ---
 
@@ -28,21 +30,25 @@ Documentação do front: [`../README.md`](../README.md).
 ```text
 backend/
 ├── app/
-│   ├── controllers/     # Auth, Turma, Aluno, Materia, Recado, Documento
-│   ├── core/            # App, Request, Response, Database, Controller, BaseModel, Autoloader
+│   ├── controllers/     # Auth, Turma, Disciplina, Aula, Aluno, Professor, AlunoPortal
+│   ├── core/            # App, Request, Response, Database, Controller, BaseModel, Autoloader, LessonUpload, PasswordHelper
 │   └── models/
 ├── config/
 │   ├── config.php
 │   └── sqlite_schema.sql
 ├── public/
-│   ├── index.php        # Front controller
+│   ├── index.php        # Front controller (Composer ou Autoloader)
 │   └── .htaccess
+├── scripts/
+│   └── composer_impact_check.php
 ├── storage/
-│   └── uploads/         # PDFs enviados
+│   └── uploads/         # PDF/DOCX das aulas
 ├── composer.json
 ├── composer.lock
 └── README.md
 ```
+
+`vendor/` é gerado por `composer install` e não é versionado.
 
 ---
 
@@ -136,7 +142,7 @@ Rotas registradas em `app/core/App.php` apenas para **GET** e **POST**.
 | `App` | Tabela de rotas e despacho |
 | `Request` | Método, route, query, body JSON/form, files |
 | `Response` | JSON + status HTTP |
-| `Controller` | `json()`, `requireAuth()`, `requireProfessor()` |
+| `Controller` | `json()`, `requireAuth()`, `requireProfessor()`, `requireAluno()` |
 | `*Controller` | Regras de cada recurso |
 | `BaseModel` / models | Acesso PDO às tabelas |
 | `Database` | Singleton PDO (MySQL ou SQLite) |
@@ -147,9 +153,10 @@ Rotas registradas em `app/core/App.php` apenas para **GET** e **POST**.
 
 | Rota | Comportamento |
 |------|----------------|
-| `POST /auth/login` | Valida `login`/`senha`, compara `sha1($senha)`, grava `$_SESSION['user']` |
+| `POST /auth/login` | Valida `login`/`senha` via `PasswordHelper`, grava `$_SESSION['user']` |
 | `GET /auth/me` | Exige sessão; devolve usuário |
 | `POST /auth/logout` | Limpa e destrói sessão |
+| `POST /auth/cadastro-aluno` | Cria `usuarios` com `perfil=aluno` e `status=pendente` (sem sessão) |
 
 Sessão típica:
 
@@ -166,6 +173,7 @@ Helpers:
 
 - `requireAuth()` → 401 se sem sessão
 - `requireProfessor()` → 403 se `perfil !== 'professor'`
+- `requireAluno()` → 403 se `perfil !== 'aluno'`
 
 ---
 
@@ -220,92 +228,106 @@ Cookies: necessários (`credentials: 'same-origin'` no front)
 
 **200:** `{ "success": true, "data": { ...user } }` · **401** sem sessão
 
-### Turmas
+#### `POST /auth/cadastro-aluno`
 
-#### `GET /turmas` — autenticado
+**Body:** `nome`, `celular`, `email`, `senha`, `confirmacao_senha` (mínimo 6 caracteres). Sem turma no pedido.
 
-Retorna `data` com lista de turmas.
+**201** solicitação criada · **409** e-mail já usado · **422** validação
 
-#### `POST /turmas` — autenticado
+### Painéis
 
-**Body:**
+#### `GET /professor/painel` — professor
 
-```json
-{
-  "nome": "TDS 2026",
-  "ano_letivo": "2026",
-  "turno": "Noite",
-  "descricao": "opcional"
-}
-```
+Resumo para o dashboard docente.
 
-Campos obrigatórios: `nome`, `ano_letivo`, `turno`.
+#### `GET /aluno/painel` — aluno
 
-### Alunos (somente professor)
+Resumo para o dashboard do aluno aprovado.
 
-Campos de domínio: `turma_id`, `nome`, `email`, `matricula`.
+### Turmas (somente professor)
+
+#### `GET /turmas`
+
+Lista turmas (`codigo`, `titulo`).
+
+#### `POST /turmas`
+
+**Body:** `{ "codigo": "TDS-2026", "titulo": "TDS 2026" }`
+
+#### `POST /turmas/update`
+
+**Body:** `id`, `codigo`, `titulo`.
+
+### Disciplinas (somente professor)
+
+#### `GET /disciplinas`
+
+Catálogo do professor.
+
+#### `POST /disciplinas`
+
+**Body:** `{ "codigo": "BD", "titulo": "Banco de Dados" }`
+
+### Aulas
+
+#### `GET /aulas` — autenticado
+
+Query opcional: `turma_id`, `disciplina_id`. Aluno vê só a própria turma.
+
+#### `GET /aulas/detalhe?id=` — autenticado
+
+Detalhe com vídeos e arquivos. Aluno só acessa aula da sua turma.
+
+#### `POST /aulas` — professor (multipart)
+
+Campos: `titulo`, `turma_id`, `disciplina_id`, `videos` (JSON de URLs YouTube), arquivos em `arquivos` (PDF/DOCX).
+
+#### `POST /aulas/update` — professor (multipart)
+
+Igual ao create, com `id` da aula.
+
+### Alunos / solicitações (somente professor)
+
+O aluno é um `usuarios`, não a tabela antiga `alunos`.
 
 #### `GET /alunos`
 
-Lista matrículas.
+Lista alunos **aprovados**.
 
-#### `POST /alunos`
+#### `GET /alunos/pendentes`
 
-Cria. **201** com `id`. **409** se matrícula duplicada.
+Pedidos com `status=pendente`.
 
-#### `POST /alunos/update`
+#### `POST /alunos/aprovar`
 
-**Body** inclui `id` + demais campos obrigatórios.
+**Body:** `{ "id": 1, "turma_id": 1 }` — vincula a uma turma e aprova.
 
-#### `POST /alunos/delete`
+#### `POST /alunos/recusar`
 
 **Body:** `{ "id": 1 }`
 
-### Matérias
-
-#### `GET /materias?turma_id=` — autenticado
-
-Filtro opcional por turma.
-
-#### `POST /materias` — autenticado
-
-**Body típico:** `turma_id`, `nome`, `descricao` (opcional).
-
-### Recados
-
-#### `GET /recados?turma_id=` — autenticado
-
-#### `POST /recados` — autenticado
-
-**Body típico:** `turma_id`, `titulo`, `mensagem`.
-
-### Documentos
-
-#### `GET /documentos?turma_id=` — autenticado
-
-#### `POST /documentos` — autenticado (multipart)
-
-Ver seção [Upload](#upload-de-documentos).
+`MateriaController`, `RecadoController` e `DocumentoController` não estão ligados em `App.php`.
 
 ---
 
-## Upload de documentos
+## Upload de aulas
 
-`POST /documentos` com `multipart/form-data`:
+`POST /aulas` e `POST /aulas/update` com `multipart/form-data`:
 
 | Campo | Tipo | Obrigatório |
 |-------|------|-------------|
-| `turma_id` | int | sim |
-| `materia_id` | int | sim |
 | `titulo` | string | sim |
-| `descricao` | string | não |
-| `arquivo` | file (PDF) | sim |
+| `turma_id` | int | sim |
+| `disciplina_id` | int | sim |
+| `videos` | JSON (URLs YouTube) | não |
+| `arquivos` | file[] (PDF ou DOCX, até 10 MB) | não |
+| `id` | int | só no update |
 
-- Apenas extensão `.pdf`
-- Arquivo salvo em `storage/uploads/` com nome `uniqid('pdf_', true) . '.pdf'`
-- `caminho_arquivo` persistido como `backend/storage/uploads/<arquivo>`
+- Implementação: `LessonUpload`
+- Arquivos em `storage/uploads/` com prefixo `aula_`
+- 0..N vídeos e 0..N arquivos por aula
 
-**201** com `id` em sucesso.
+**201** na criação · **200** na atualização
 
 ---
 
@@ -318,7 +340,7 @@ Ver seção [Upload](#upload-de-documentos).
 | 401 | Não autenticado / credenciais inválidas |
 | 403 | Autenticado, mas sem perfil professor |
 | 404 | Rota ou recurso inexistente |
-| 409 | Conflito (ex.: matrícula duplicada) |
+| 409 | Conflito (ex.: código de turma/disciplina ou e-mail duplicado) |
 | 422 | Validação de entrada |
 | 500 | Erro interno (`message` + `error` com detalhe da exceção) |
 
@@ -337,12 +359,12 @@ Ver seção [Upload](#upload-de-documentos).
 ## Limitações conhecidas
 
 1. **PHP 5.6** — manter sintaxe antiga.
-2. **sha1** — inadequado para produção; preferir `password_hash` / `password_verify` em evolução futura.
+2. **Senhas** — contas novas usam bcrypt quando `password_hash` existe; o seed do professor ainda é `sha1`.
 3. **CORS `*`** — ok em same-origin; cookies de sessão não fluem bem em apps cross-origin.
-4. **500 vazam `error`** — mensagem de exceção no JSON.
+4. **500** — o front controller devolve mensagem genérica; evite vazar detalhe em produção.
 5. **Config SQLite** — driver env não chega automaticamente ao `Database` (ver README raiz).
-6. **Sem registro público** — não há `POST /auth/register` ainda (cadastro-aluno no front está em evolução).
-7. **`usuarios` ≠ `alunos`** — login e matrícula são entidades separadas.
+6. **Pedido público** — `POST /auth/cadastro-aluno` cria aluno `pendente`; o professor aprova e escolhe a turma.
+7. **Controllers legados** — `Materia`, `Recado` e `Documento` não têm rota registrada.
 
 ---
 

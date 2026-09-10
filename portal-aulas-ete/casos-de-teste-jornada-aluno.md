@@ -10,6 +10,8 @@ Complementa [`casos-de-teste-jornada-professor.md`](./casos-de-teste-jornada-pro
 
 **Ambiente:** `http://localhost/ava/portal-aulas-ete/`
 
+O Composer no backend não altera este plano: o aluno continua falando só com as rotas de cadastro, sessão e aulas. Sem `vendor/`, vale o `Autoloader.php`.
+
 **Prioridade:** P0 bloqueia release · P1 fluxo principal · P2 qualidade / borda.
 
 **Telas da jornada:**
