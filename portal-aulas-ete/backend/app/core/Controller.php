@@ -15,6 +15,24 @@ class Controller
                 'message' => 'Acesso não autorizado.'
             ), 401);
         }
+
+        $this->refreshSessionUser();
+    }
+
+    protected function refreshSessionUser()
+    {
+        $id = isset($_SESSION['user']['id']) ? (int) $_SESSION['user']['id'] : 0;
+        if ($id <= 0) {
+            return;
+        }
+
+        $userModel = new User();
+        $fresh = $userModel->findByIdWithTurma($id);
+        if (!$fresh) {
+            return;
+        }
+
+        $_SESSION['user'] = $userModel->toSessionUser($fresh);
     }
 
     protected function requireProfessor()
