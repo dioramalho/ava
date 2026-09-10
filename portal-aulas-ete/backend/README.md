@@ -1,6 +1,6 @@
 # Backend PHP — Portal de Aulas TDS
 
-API JSON em **PHP 5.6**, **PDO**, **POO** e **MVC enxuto**, sem Composer e sem framework.
+API JSON em **PHP 5.6**, **PDO**, **POO** e **MVC enxuto**, sem framework. O Composer cuida do autoload (`classmap`); se `vendor/` não existir, o `Autoloader.php` entra como fallback.
 
 Documentação do repositório: [`../../README.md`](../../README.md).  
 Documentação do front: [`../README.md`](../README.md).
@@ -39,6 +39,8 @@ backend/
 │   └── .htaccess
 ├── storage/
 │   └── uploads/         # PDFs enviados
+├── composer.json
+├── composer.lock
 └── README.md
 ```
 
@@ -50,6 +52,12 @@ backend/
 - Extensão PDO + driver MySQL e/ou SQLite
 - Apache com `mod_rewrite` (opcional) **ou** `php -S`
 - Sessões PHP habilitadas
+- [Composer](https://getcomposer.org/) 2 para instalar dependências (requer PHP 7.2.5+ só para rodar o `composer`; o código da API permanece compatível com 5.6)
+
+```bash
+cd portal-aulas-ete/backend
+composer install
+```
 
 ---
 
@@ -108,7 +116,7 @@ return array(
 
 1. `session_start()`
 2. Headers CORS (`*`, métodos GET/POST/OPTIONS)
-3. Autoload das classes
+3. Autoload das classes (`vendor/autoload.php` ou `Autoloader.php`)
 4. `Request` + `App::run()`
 
 **URL típica (front):**
@@ -335,6 +343,20 @@ Ver seção [Upload](#upload-de-documentos).
 5. **Config SQLite** — driver env não chega automaticamente ao `Database` (ver README raiz).
 6. **Sem registro público** — não há `POST /auth/register` ainda (cadastro-aluno no front está em evolução).
 7. **`usuarios` ≠ `alunos`** — login e matrícula são entidades separadas.
+
+---
+
+## Teste de impacto do Composer
+
+Compara o autoload do Composer com o `Autoloader.php` interno (classes + respostas HTTP da API):
+
+```bash
+cd portal-aulas-ete/backend
+composer install
+php scripts/composer_impact_check.php
+```
+
+Saída esperada: `RESULTADO: nenhum impacto funcional detectado.`
 
 ---
 

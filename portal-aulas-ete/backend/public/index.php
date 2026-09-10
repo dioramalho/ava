@@ -11,7 +11,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-require_once dirname(__DIR__) . '/app/core/Autoloader.php';
+$composerAutoload = dirname(__DIR__) . '/vendor/autoload.php';
+
+if (file_exists($composerAutoload)) {
+    require_once $composerAutoload;
+} else {
+    require_once dirname(__DIR__) . '/app/core/Autoloader.php';
+}
 
 try {
     $request = new Request();

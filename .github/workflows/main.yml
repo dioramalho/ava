@@ -15,6 +15,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Composer dependencies
+        working-directory: portal-aulas-ete/backend
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
       - name: Check FTP IPv4 port 21
         run: |
           python3 - <<'PY'
@@ -51,6 +62,6 @@ jobs:
           open -u "$FTP_USERNAME","$FTP_PASSWORD" ftp://ftp.diogoramalho.com.br:21
           lcd portal-aulas-ete
           cd /public_html/ava.dev.diogoramalho.com.br/
-          mirror -R --verbose --delete --parallel=3 --exclude-glob .git* --exclude-glob node_modules/** --exclude-glob .github/** --exclude-glob backend/storage/uploads/**
+          mirror -R --verbose --delete --parallel=3 --exclude-glob .git* --exclude-glob node_modules/** --exclude-glob .github/** --exclude-glob backend/vendor/** --exclude-glob backend/storage/uploads/**
           bye
           EOF
