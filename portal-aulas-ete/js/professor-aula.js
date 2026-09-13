@@ -9,6 +9,7 @@
   const aulaId = document.getElementById('aulaId');
   const arquivosAtuais = document.getElementById('arquivosAtuais');
   const avisoVinculo = document.getElementById('avisoVinculo');
+  const excluirAulaBtn = document.getElementById('excluirAulaBtn');
 
   initialize();
 
@@ -35,6 +36,10 @@
     });
 
     form.addEventListener('submit', onSubmit);
+    arquivosAtuais.addEventListener('click', onArquivoClick);
+    if (excluirAulaBtn) {
+      excluirAulaBtn.addEventListener('click', onDelete);
+    }
 
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
@@ -58,6 +63,21 @@
     videoList.appendChild(input);
   }
 
+  function renderArquivos(arquivos) {
+    if (!arquivos || !arquivos.length) {
+      arquivosAtuais.innerHTML = '';
+      return;
+    }
+
+    arquivosAtuais.innerHTML = '<p class="small text-muted mb-2">Arquivos já publicados:</p><ul class="list-unstyled small mb-3">' +
+      arquivos.map(function (arquivo) {
+        return '<li class="d-flex align-items-center justify-content-between gap-2 mb-2">' +
+          '<a href="' + escapeHtml(arquivo.caminho_arquivo) + '" target="_blank" rel="noopener">' + escapeHtml(arquivo.nome_original) + '</a>' +
+          '<button type="button" class="btn btn-sm btn-outline-danger js-excluir-arquivo" data-id="' + arquivo.id + '" data-nome="' + escapeHtml(arquivo.nome_original) + '">Excluir</button>' +
+          '</li>';
+      }).join('') + '</ul>';
+  }
+
   async function loadAula(id) {
     const response = await apiRequest('/aulas/detalhe?id=' + encodeURIComponent(id));
     const aula = response.data;
@@ -66,6 +86,7 @@
     document.getElementById('aulaTurma').value = aula.turma_id;
     document.getElementById('aulaDisciplina').value = aula.disciplina_id;
     document.querySelector('h1').textContent = 'Editar aula';
+    excluirAulaBtn.classList.remove('d-none');
 
     videoList.innerHTML = '';
     const videos = aula.videos || [];
@@ -77,12 +98,39 @@
       });
     }
 
-    const arquivos = aula.arquivos || [];
-    if (arquivos.length) {
-      arquivosAtuais.innerHTML = '<p class="small text-muted mb-2">Arquivos já publicados:</p><ul class="small mb-3">' +
-        arquivos.map(function (arquivo) {
-          return '<li><a href="' + escapeHtml(arquivo.caminho_arquivo) + '" target="_blank" rel="noopener">' + escapeHtml(arquivo.nome_original) + '</a></li>';
-        }).join('') + '</ul>';
+    renderArquivos(aula.arquivos || []);
+  }
+
+  async function onArquivoClick(event) {
+    const button = event.target.closest ? event.target.closest('.js-excluir-arquivo') : null;
+    if (!button) {
+      return;
+    }
+
+    const arquivoId = button.getAttribute('data-id');
+    const nome = button.getAttribute('data-nome') || 'este arquivo';
+    if (!aulaId.value || !arquivoId) {
+      return;
+    }
+    if (!window.confirm('Excluir o arquivo "' + nome + '"? Esta ação não pode ser desfeita.')) {
+      return;
+    }
+
+    button.disabled = true;
+    try {
+      await apiRequest('/aulas/arquivos/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          aula_id: aulaId.value,
+          id: arquivoId
+        })
+      });
+      const detalhe = await apiRequest('/aulas/detalhe?id=' + encodeURIComponent(aulaId.value));
+      renderArquivos((detalhe.data && detalhe.data.arquivos) || []);
+    } catch (error) {
+      button.disabled = false;
+      window.alert(error.message);
     }
   }
 
@@ -111,6 +159,30 @@
       await apiRequest(route, { method: 'POST', body: body });
       window.location.href = 'professor-aulas.html';
     } catch (error) {
+      window.alert(error.message);
+    }
+  }
+
+  async function onDelete() {
+    const id = aulaId.value;
+    const titulo = document.getElementById('aulaTitulo').value.trim() || 'esta aula';
+    if (!id) {
+      return;
+    }
+    if (!window.confirm('Excluir a aula "' + titulo + '"? Os arquivos enviados também serão removidos.')) {
+      return;
+    }
+
+    excluirAulaBtn.disabled = true;
+    try {
+      await apiRequest('/aulas/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id })
+      });
+      window.location.href = 'professor-aulas.html';
+    } catch (error) {
+      excluirAulaBtn.disabled = false;
       window.alert(error.message);
     }
   }

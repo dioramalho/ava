@@ -83,6 +83,103 @@ class AulaController extends Controller
         $this->persist($request, $id);
     }
 
+    public function destroyArquivo(Request $request)
+    {
+        $this->requireProfessor();
+
+        $aulaId = (int) $request->input('aula_id', 0);
+        $arquivoId = (int) $request->input('id', 0);
+        if ($aulaId <= 0 || $arquivoId <= 0) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Aula e arquivo são obrigatórios.'
+            ), 422);
+        }
+
+        $aulaModel = new Aula();
+        if (!$aulaModel->findById($aulaId)) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Aula não encontrada.'
+            ), 404);
+        }
+
+        $arquivo = $aulaModel->findArquivoById($arquivoId);
+        if (!$arquivo || (int) $arquivo['aula_id'] !== $aulaId) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Arquivo não encontrado nesta aula.'
+            ), 404);
+        }
+
+        if (!$aulaModel->deleteArquivoById($arquivoId)) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Não foi possível excluir o arquivo.'
+            ), 500);
+        }
+
+        $config = require dirname(dirname(__DIR__)) . '/config/config.php';
+        $appConfig = isset($config['app']) ? $config['app'] : array();
+        LessonUpload::deleteStored($arquivo['caminho_arquivo'], $appConfig);
+
+        $this->json(array(
+            'success' => true,
+            'message' => 'Arquivo excluído com sucesso.'
+        ), 200);
+    }
+
+    public function destroy(Request $request)
+    {
+        $this->requireProfessor();
+
+        $id = (int) $request->input('id', 0);
+        if ($id <= 0) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'ID da aula é obrigatório.'
+            ), 422);
+        }
+
+        $aulaModel = new Aula();
+        $aula = $aulaModel->findById($id);
+        if (!$aula) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Aula não encontrada.'
+            ), 404);
+        }
+
+        $arquivos = isset($aula['arquivos']) && is_array($aula['arquivos']) ? $aula['arquivos'] : array();
+        $config = require dirname(dirname(__DIR__)) . '/config/config.php';
+
+        $aulaModel->beginTransaction();
+
+        try {
+            $aulaModel->deleteVideos($id);
+            $aulaModel->deleteArquivos($id);
+            $aulaModel->deleteById($id);
+            $aulaModel->commit();
+        } catch (Exception $exception) {
+            $aulaModel->rollBack();
+            $this->json(array(
+                'success' => false,
+                'message' => 'Não foi possível excluir a aula.'
+            ), 500);
+        }
+
+        $appConfig = isset($config['app']) ? $config['app'] : array();
+        foreach ($arquivos as $arquivo) {
+            $caminho = isset($arquivo['caminho_arquivo']) ? $arquivo['caminho_arquivo'] : '';
+            LessonUpload::deleteStored($caminho, $appConfig);
+        }
+
+        $this->json(array(
+            'success' => true,
+            'message' => 'Aula excluída com sucesso.'
+        ), 200);
+    }
+
     private function persist(Request $request, $aulaId)
     {
         $this->requireProfessor();

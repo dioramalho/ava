@@ -21,6 +21,7 @@
 
     filtroTurma.addEventListener('change', load);
     filtroDisciplina.addEventListener('change', load);
+    tabela.addEventListener('click', onTableClick);
     await load();
   }
 
@@ -56,8 +57,37 @@
         '<td>' + escapeHtml(aula.turma_codigo) + '</td>' +
         '<td>' + escapeHtml(aula.disciplina_titulo) + '</td>' +
         '<td><span class="small">' + aula.videos_count + ' vídeo(s) · ' + aula.arquivos_count + ' arquivo(s)</span></td>' +
-        '<td class="text-end"><a class="btn btn-sm btn-outline-secondary" href="professor-aula.html?id=' + aula.id + '">Editar</a></td>' +
+        '<td class="text-end text-nowrap">' +
+        '<a class="btn btn-sm btn-outline-secondary me-1" href="professor-aula.html?id=' + aula.id + '">Editar</a>' +
+        '<button type="button" class="btn btn-sm btn-outline-danger js-excluir-aula" data-id="' + aula.id + '" data-titulo="' + escapeHtml(aula.titulo) + '">Excluir</button>' +
+        '</td>' +
         '</tr>';
     }).join('');
+  }
+
+  async function onTableClick(event) {
+    const button = event.target.closest ? event.target.closest('.js-excluir-aula') : null;
+    if (!button) {
+      return;
+    }
+
+    const id = button.getAttribute('data-id');
+    const titulo = button.getAttribute('data-titulo') || 'esta aula';
+    if (!window.confirm('Excluir a aula "' + titulo + '"? Os arquivos enviados também serão removidos.')) {
+      return;
+    }
+
+    button.disabled = true;
+    try {
+      await apiRequest('/aulas/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id })
+      });
+      await load();
+    } catch (error) {
+      button.disabled = false;
+      window.alert(error.message);
+    }
   }
 })();

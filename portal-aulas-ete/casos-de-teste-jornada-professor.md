@@ -23,6 +23,8 @@ O Composer (`portal-aulas-ete/backend`) só afeta o autoload PHP. Sem `vendor/`,
 | Material | 0..N links YouTube e 0..N arquivos PDF ou DOCX por aula |
 | Identificador | ID interno automático; professor informa **código** (ex. TDS-2025) + título |
 | Publicação | Salvar aula = já visível para alunos **aprovados** daquela turma |
+| Excluir aula | Remove o registro, os vídeos ligados e **todos** os arquivos em `backend/storage/uploads/` daquela aula |
+| Excluir arquivo | Na edição, o professor remove **um arquivo por vez** sem apagar a aula nem os demais anexos/vídeos |
 | Recados | Não aparecem no painel nem no menu do professor |
 
 ---
@@ -269,7 +271,7 @@ O Composer (`portal-aulas-ete/backend`) só afeta o autoload PHP. Sem `vendor/`,
 
 **Passos:** em **Aulas**, filtrar por turma TDS-2025; depois por disciplina Programação Web; depois ambos.
 
-**Esperado:** lista só as combinações corretas. Colunas: título, turma, disciplina, resumo de material (N vídeos · N arquivos), editar.
+**Esperado:** lista só as combinações corretas. Colunas: título, turma, disciplina, resumo de material (N vídeos · N arquivos), ações **Editar** e **Excluir**.
 
 ---
 
@@ -344,6 +346,44 @@ O Composer (`portal-aulas-ete/backend`) só afeta o autoload PHP. Sem `vendor/`,
 
 ---
 
+### JP-05.09 — Excluir aula com material (P0)
+
+**Pré-condição:** aula com ≥1 YouTube, 1 PDF e 1 DOCX; nomes internos conhecidos em `backend/storage/uploads/`; existe pelo menos outra aula com arquivo próprio (JP-08.03).
+
+**Passos:** confirmar exclusão na lista (`professor-aulas.html`) e/ou na edição (`professor-aula.html?id=`).
+
+**Esperado:**
+
+- Some da lista de aulas e do painel (**Últimas aulas**).
+- `GET /aulas/detalhe?id=` da aula excluída → **404**.
+- Linhas em `aula_videos` e `aula_arquivos` daquela aula sumiram.
+- Os dois arquivos físicos da aula foram **apagados** de `backend/storage/uploads/`.
+- Arquivos de **outras** aulas permanecem no disco e no banco.
+
+---
+
+### JP-05.10 — Cancelar exclusão (P2)
+
+**Passos:** abrir a confirmação de excluir aula e cancelar.
+
+**Esperado:** aula, vídeos e arquivos (banco e disco) intactos.
+
+---
+
+### JP-05.11 — Excluir aula sem anexos (P1)
+
+**Pré-condição:** aula só com título + turma + disciplina (JP-05.04); outros arquivos de outras aulas na pasta de uploads.
+
+**Esperado:** some da lista sem erro; pasta de uploads **inalterada** para os demais arquivos.
+
+---
+
+### JP-05.12 — Confirmação explícita (P0)
+
+**Esperado:** texto claro de que a aula **e os arquivos enviados** serão removidos; não excluir em um único clique acidental.
+
+---
+
 ## JP-06 — Material (YouTube, PDF, DOCX)
 
 ### JP-06.01 — URL YouTube válida (P0)
@@ -392,6 +432,45 @@ Aceitar, no mínimo:
 **Passos:** clicar **+ Adicionar outro vídeo**; preencher o novo campo.
 
 **Esperado:** linha extra no formulário; todos os URLs não vazios são salvos.
+
+---
+
+### JP-06.07 — Remover um de vários arquivos (P0)
+
+**Pré-condição:** aula com PDF + DOCX (JP-05.05); aluno aprovado na mesma turma.
+
+**Passos:** abrir `professor-aula.html?id=`; excluir só o PDF; confirmar.
+
+**Esperado:**
+
+- PDF some da lista **Arquivos já publicados**; DOCX permanece.
+- Aula, turma, disciplina e vídeos intactos.
+- Arquivo PDF **apagado do disco**; DOCX ainda existe em `backend/storage/uploads/`.
+- Aluno da turma, ao atualizar o detalhe, vê só o DOCX (JA-05.10).
+
+---
+
+### JP-06.08 — Remover o último arquivo e manter a aula (P1)
+
+**Passos:** na edição, excluir o último anexo restante.
+
+**Esperado:** aula continua publicada (regra 0..N); área de arquivos vazia no professor e no aluno (JA-05.03).
+
+---
+
+### JP-06.09 — Cancelar remoção de arquivo (P2)
+
+**Passos:** na edição, iniciar exclusão de um arquivo e cancelar a confirmação.
+
+**Esperado:** anexo na UI e arquivo em disco permanecem.
+
+---
+
+### JP-06.10 — Arquivo já removido / ID inválido (P1)
+
+**Passos:** chamar a API de exclusão de arquivo com `arquivo_id` inexistente ou já apagado.
+
+**Esperado:** **404**; mensagem na UI; não apaga outro arquivo da mesma aula nem de outra.
 
 ---
 
@@ -462,7 +541,7 @@ Aceitar, no mínimo:
 
 Sem sessão: **401**. Sessão aluno: **403**.
 
-Cobrir no mínimo: criar/editar turma, disciplina, aula, upload, listar pendentes, aprovar, recusar.
+Cobrir no mínimo: criar/editar turma, disciplina, aula, upload, **excluir aula**, **excluir arquivo da aula**, listar pendentes, aprovar, recusar.
 
 ---
 
@@ -477,6 +556,16 @@ Cobrir no mínimo: criar/editar turma, disciplina, aula, upload, listar pendente
 ### JP-08.03 — Upload não sobrescreve arquivo de outra aula (P1)
 
 **Esperado:** nome interno único (`uniqid` ou equivalente); dois PDFs com o mesmo nome original convivem.
+
+---
+
+### JP-08.04 — Isolamento na exclusão de arquivo (P0)
+
+**Pré-condição:** duas aulas, cada uma com pelo menos um arquivo.
+
+**Passos:** autenticado como professor, tentar apagar `arquivo_id` da aula B informando (ou implicando) a aula A; aluno tenta a mesma rota.
+
+**Esperado:** **403** ou **404**; arquivo da aula B intacto no banco e no disco. Aluno: **403**.
 
 ---
 
@@ -507,11 +596,13 @@ Simula o professor no primeiro uso, na ordem de trabalho acordada.
 | 3 | Cadastrar disciplina WEB | Catálogo único |
 | 4 | Tentar nova aula antes disso (opcional, ambiente vazio) | Bloqueio se faltar 2 ou 3 |
 | 5 | Publicar aula com 2 YouTube + PDF + DOCX | Visível na lista |
-| 6 | Aluno solicita acesso | Aparece na fila |
-| 7 | Aprovar na TDS-2026 | Aluno loga |
-| 8 | Aluno abre o dashboard | Vê só a aula da TDS-2026 |
-| 9 | Recusar outro pedido | Esse aluno não entra |
-| 10 | Sair | Volta ao login |
+| 6 | Na edição, excluir um arquivo (PDF) | JP-06.07; disco e aluno conferidos |
+| 7 | Excluir a aula | JP-05.09; 404 no detalhe; uploads da aula sumiram |
+| 8 | Aluno solicita acesso | Aparece na fila |
+| 9 | Aprovar na TDS-2026 | Aluno loga |
+| 10 | Aluno abre o dashboard | Não vê a aula excluída; só conteúdo ainda publicado da TDS-2026 |
+| 11 | Recusar outro pedido | Esse aluno não entra |
+| 12 | Sair | Volta ao login |
 
 **Falha em qualquer passo P0 desta tabela = jornada v1 não está pronta.**
 
@@ -550,12 +641,20 @@ Simula o professor no primeiro uso, na ordem de trabalho acordada.
 | JP-05.06 | Aulas | Bloqueio | P0 |
 | JP-05.07 | Aulas | Edição | P1 |
 | JP-05.08 | Aulas | Cancelar | P2 |
+| JP-05.09 | Aulas | Excluir | P0 |
+| JP-05.10 | Aulas | Cancelar exclusão | P2 |
+| JP-05.11 | Aulas | Excluir sem anexo | P1 |
+| JP-05.12 | Aulas | Confirmação | P0 |
 | JP-06.01 | Material | YouTube | P0 |
 | JP-06.02 | Material | URL inválida | P1 |
 | JP-06.03 | Material | PDF/DOCX | P0 |
 | JP-06.04 | Material | Tipo inválido | P0 |
 | JP-06.05 | Material | Tamanho | P2 |
 | JP-06.06 | Material | UI | P2 |
+| JP-06.07 | Material | Excluir arquivo | P0 |
+| JP-06.08 | Material | Último arquivo | P1 |
+| JP-06.09 | Material | Cancelar arquivo | P2 |
+| JP-06.10 | Material | Arquivo inválido | P1 |
 | JP-07.01 | Alunos | Fila | P0 |
 | JP-07.02 | Alunos | Aprovar | P0 |
 | JP-07.03 | Alunos | Recusar | P0 |
@@ -566,6 +665,7 @@ Simula o professor no primeiro uso, na ordem de trabalho acordada.
 | JP-08.01 | API | 401/403 | P0 |
 | JP-08.02 | API | Injeção | P1 |
 | JP-08.03 | API | Upload | P1 |
+| JP-08.04 | API | Isolar arquivo | P0 |
 | JP-09.01 | UX | Nav/marca | P1 |
 | JP-09.02 | UX | Mobile | P2 |
 | JP-10 | E2E | Jornada | P0 |

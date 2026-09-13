@@ -195,7 +195,7 @@ Response JSON { success, message?, data?, id?, error? }
 
 - Principal: query string `?route=/caminho`
 - Alternativo: path após `SCRIPT_NAME` (Apache + rewrite)
-- Mutações usam **POST** (sem PUT/DELETE REST): `/turmas/update`, `/aulas/update`, `/alunos/aprovar`, `/alunos/recusar`
+- Mutações usam **POST** (sem PUT/DELETE REST): `/turmas/update`, `/aulas/update`, `/aulas/delete`, `/aulas/arquivos/delete`, `/alunos/aprovar`, `/alunos/recusar`
 
 ---
 
