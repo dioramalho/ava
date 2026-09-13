@@ -47,11 +47,11 @@ portal-aulas-ete/
 ├── aluno-aguardando.html
 ├── aluno-recusado.html
 ├── dashboard-professor.html
-├── professor-turmas.html
-├── professor-disciplinas.html
-├── professor-aulas.html
-├── professor-aula.html
-├── professor-alunos.html
+├── professor-turmas.php
+├── professor-disciplinas.php
+├── professor-aulas.php
+├── professor-aula.php
+├── professor-alunos.php
 ├── css/style.css
 ├── js/                    # sem bundler/npm
 ├── assets/
@@ -129,10 +129,10 @@ O front não usa npm. O **Composer** vale só para o backend (`backend/composer.
 
 ### Gestão do professor
 
-- `professor-turmas.html` — CRUD de código/título
-- `professor-disciplinas.html` — catálogo
-- `professor-aulas.html` / `professor-aula.html` — publicar aula (YouTube + arquivos)
-- `professor-alunos.html` — aprovar (escolhe a turma) ou recusar
+- `professor-turmas.php` — CRUD de código/título
+- `professor-disciplinas.php` — catálogo
+- `professor-aulas.php` / `professor-aula.php` — publicar aula (YouTube + arquivos)
+- `professor-alunos.php` — aprovar (escolhe a turma) ou recusar
 
 ---
 

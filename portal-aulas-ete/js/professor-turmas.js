@@ -1,5 +1,5 @@
 (function () {
-  if (!window.location.pathname.endsWith('professor-turmas.html')) {
+  if (!window.location.pathname.endsWith('professor-turmas.php')) {
     return;
   }
 

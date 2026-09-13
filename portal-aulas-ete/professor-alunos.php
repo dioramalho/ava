@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portal ETE | Alunos</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
+<?php include 'shared/header-professor.php'; ?>
   <body class="ete-app-shell">
     <div class="ete-stripes"><span class="s-y"></span><span class="s-g"></span><span class="s-r"></span></div>
     <nav class="navbar navbar-expand-lg ete-navbar sticky-top">
@@ -22,10 +13,10 @@
         <div class="collapse navbar-collapse" id="navProf">
           <ul class="navbar-nav ms-auto align-items-lg-center gap-1 mt-3 mt-lg-0">
             <li class="nav-item"><a class="nav-link" href="dashboard-professor.html">Painel</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-turmas.html">Turmas</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-disciplinas.html">Disciplinas</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-aulas.html">Aulas</a></li>
-            <li class="nav-item"><a class="nav-link active" href="professor-alunos.html">Alunos</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-turmas.php">Turmas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-disciplinas.php">Disciplinas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-aulas.php">Aulas</a></li>
+            <li class="nav-item"><a class="nav-link active" href="professor-alunos.php">Alunos</a></li>
             <li class="nav-item ms-lg-2"><button id="logoutBtn" class="btn btn-sm btn-outline-light btn-touch">Sair</button></li>
           </ul>
         </div>

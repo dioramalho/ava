@@ -1,5 +1,5 @@
 (function () {
-  if (!window.location.pathname.endsWith('professor-aulas.html')) {
+  if (!window.location.pathname.endsWith('professor-aulas.php')) {
     return;
   }
 
@@ -58,7 +58,7 @@
         '<td>' + escapeHtml(aula.disciplina_titulo) + '</td>' +
         '<td><span class="small">' + aula.videos_count + ' vídeo(s) · ' + aula.arquivos_count + ' arquivo(s)</span></td>' +
         '<td class="text-end text-nowrap">' +
-        '<a class="btn btn-sm btn-outline-secondary me-1" href="professor-aula.html?id=' + aula.id + '">Editar</a>' +
+        '<a class="btn btn-sm btn-outline-secondary me-1" href="professor-aula.php?id=' + aula.id + '">Editar</a>' +
         '<button type="button" class="btn btn-sm btn-outline-danger js-excluir-aula" data-id="' + aula.id + '" data-titulo="' + escapeHtml(aula.titulo) + '">Excluir</button>' +
         '</td>' +
         '</tr>';

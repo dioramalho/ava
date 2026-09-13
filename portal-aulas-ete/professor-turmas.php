@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portal ETE | Disciplinas</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
+<?php include 'shared/header-professor.php'; ?>
   <body class="ete-app-shell">
     <div class="ete-stripes"><span class="s-y"></span><span class="s-g"></span><span class="s-r"></span></div>
     <nav class="navbar navbar-expand-lg ete-navbar sticky-top">
@@ -22,10 +13,10 @@
         <div class="collapse navbar-collapse" id="navProf">
           <ul class="navbar-nav ms-auto align-items-lg-center gap-1 mt-3 mt-lg-0">
             <li class="nav-item"><a class="nav-link" href="dashboard-professor.html">Painel</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-turmas.html">Turmas</a></li>
-            <li class="nav-item"><a class="nav-link active" href="professor-disciplinas.html">Disciplinas</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-aulas.html">Aulas</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-alunos.html">Alunos</a></li>
+            <li class="nav-item"><a class="nav-link active" href="professor-turmas.php">Turmas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-disciplinas.php">Disciplinas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-aulas.php">Aulas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-alunos.php">Alunos</a></li>
             <li class="nav-item ms-lg-2"><button id="logoutBtn" class="btn btn-sm btn-outline-light btn-touch">Sair</button></li>
           </ul>
         </div>
@@ -34,32 +25,45 @@
 
     <main class="container-xxl py-4 py-md-5">
       <section class="ete-page-hero mb-4">
-        <h1 class="h3 fw-bold mb-2">Disciplinas</h1>
-        <p class="mb-0" style="opacity: 0.9">Catálogo único do professor. A ligação com a turma acontece na aula.</p>
+        <h1 class="h3 fw-bold mb-2">Turmas</h1>
+        <p class="mb-0" style="opacity: 0.9">Cadastro simples: código visível e título. O identificador interno é gerado pelo sistema.</p>
       </section>
 
       <section class="row g-4">
         <div class="col-lg-4">
           <article class="ete-card p-4">
-            <h2 class="h5 fw-bold mb-3">Nova disciplina</h2>
-            <form id="disciplinaForm" class="d-grid gap-3">
+            <h2 class="h5 fw-bold mb-3">Nova turma</h2>
+            <form id="turmaForm" class="d-grid gap-3">
+              <input type="hidden" id="turmaId" />
               <div>
-                <label class="form-label fw-semibold" for="discCodigo">Código</label>
-                <input id="discCodigo" class="form-control" placeholder="Ex.: POO" required />
+                <label class="form-label fw-semibold" for="turmaCodigo">Código</label>
+                <input id="turmaCodigo" class="form-control" placeholder="Ex.: TDS-2025" required />
               </div>
               <div>
-                <label class="form-label fw-semibold" for="discTitulo">Título</label>
-                <input id="discTitulo" class="form-control" placeholder="Ex.: Programação Orientada a Objetos" required />
+                <label class="form-label fw-semibold" for="turmaTitulo">Título</label>
+                <input id="turmaTitulo" class="form-control" placeholder="Ex.: Técnico em Desenvolvimento de Sistemas 2025" required />
               </div>
-              <button type="submit" class="btn btn-ete-primary btn-touch">Cadastrar disciplina</button>
+              <button type="submit" class="btn btn-ete-primary btn-touch" id="turmaSubmit">Cadastrar turma</button>
             </form>
           </article>
         </div>
         <div class="col-lg-8">
           <article class="ete-card p-4">
-            <h2 class="h5 fw-bold mb-3">Catálogo</h2>
-            <div id="disciplinasLista">
-              <p class="text-muted mb-0">Carregando...</p>
+            <h2 class="h5 fw-bold mb-3">Turmas cadastradas</h2>
+            <div class="table-responsive">
+              <table class="table ete-table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Título</th>
+                    <th>Alunos</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="turmasTableBody">
+                  <tr><td colspan="4" class="text-muted">Carregando...</td></tr>
+                </tbody>
+              </table>
             </div>
           </article>
         </div>
@@ -69,6 +73,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="js/api.js?v=3"></script>
     <script src="js/session.js?v=3"></script>
-    <script src="js/professor-disciplinas.js?v=3"></script>
+    <script src="js/professor-turmas.js?v=3"></script>
   </body>
 </html>

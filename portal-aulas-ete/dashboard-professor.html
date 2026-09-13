@@ -22,10 +22,10 @@
         <div class="collapse navbar-collapse" id="navProf">
           <ul class="navbar-nav ms-auto align-items-lg-center gap-1 mt-3 mt-lg-0">
             <li class="nav-item"><a class="nav-link active" href="dashboard-professor.html">Painel</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-turmas.html">Turmas</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-disciplinas.html">Disciplinas</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-aulas.html">Aulas</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-alunos.html">Alunos</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-turmas.php">Turmas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-disciplinas.php">Disciplinas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-aulas.php">Aulas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-alunos.php">Alunos</a></li>
             <li class="nav-item ms-lg-2"><button id="logoutBtn" class="btn btn-sm btn-outline-light btn-touch">Sair</button></li>
           </ul>
         </div>
@@ -41,7 +41,7 @@
 
       <section class="row g-3 mb-4" aria-label="Resumo">
         <div class="col-6 col-lg-3">
-          <a href="professor-turmas.html" class="text-decoration-none">
+          <a href="professor-turmas.php" class="text-decoration-none">
             <article class="ete-card ete-stat h-100 p-3 p-md-4">
               <p class="text-muted small mb-2">Turmas</p>
               <p class="ete-stat-value mb-1" id="countTurmas">0</p>
@@ -50,7 +50,7 @@
           </a>
         </div>
         <div class="col-6 col-lg-3">
-          <a href="professor-disciplinas.html" class="text-decoration-none">
+          <a href="professor-disciplinas.php" class="text-decoration-none">
             <article class="ete-card ete-stat h-100 p-3 p-md-4">
               <p class="text-muted small mb-2">Disciplinas</p>
               <p class="ete-stat-value mb-1" id="countDisciplinas">0</p>
@@ -59,7 +59,7 @@
           </a>
         </div>
         <div class="col-6 col-lg-3">
-          <a href="professor-aulas.html" class="text-decoration-none">
+          <a href="professor-aulas.php" class="text-decoration-none">
             <article class="ete-card ete-stat h-100 p-3 p-md-4">
               <p class="text-muted small mb-2">Aulas</p>
               <p class="ete-stat-value mb-1" id="countAulas">0</p>
@@ -68,7 +68,7 @@
           </a>
         </div>
         <div class="col-6 col-lg-3">
-          <a href="professor-alunos.html" class="text-decoration-none">
+          <a href="professor-alunos.php" class="text-decoration-none">
             <article class="ete-card ete-stat h-100 p-3 p-md-4">
               <p class="text-muted small mb-2">Alunos ativos</p>
               <p class="ete-stat-value mb-1" id="countAlunos">0</p>
@@ -88,7 +88,7 @@
             <div class="d-grid gap-3" id="pendentesWrap">
               <p class="text-muted mb-0">Carregando solicitações...</p>
             </div>
-            <a href="professor-alunos.html" class="d-inline-block mt-3 fw-semibold" style="color: var(--ete-navy)">Ver todas as solicitações</a>
+            <a href="professor-alunos.php" class="d-inline-block mt-3 fw-semibold" style="color: var(--ete-navy)">Ver todas as solicitações</a>
           </article>
         </div>
 
@@ -96,7 +96,7 @@
           <article class="ete-card p-4 h-100">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h2 class="h5 fw-bold mb-0">Últimas aulas</h2>
-              <a href="professor-aula.html" class="btn btn-ete-yellow btn-sm">Nova aula</a>
+              <a href="professor-aula.php" class="btn btn-ete-yellow btn-sm">Nova aula</a>
             </div>
             <ul class="list-group list-group-flush" id="aulasRecentes">
               <li class="list-group-item px-0 text-muted">Carregando aulas...</li>

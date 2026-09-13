@@ -348,7 +348,7 @@ index.html (Entrar / Solicitar cadastro)
 
 ### JA-06.01 — Aluno não acessa painel do professor (P0)
 
-**Passos:** sessão aluno; URLs `dashboard-professor.html`, `professor-turmas.html`, `professor-aula.html`, `professor-alunos.html`.
+**Passos:** sessão aluno; URLs `dashboard-professor.html`, `professor-turmas.php`, `professor-aula.php`, `professor-alunos.php`.
 
 **Esperado:** redirect para `dashboard.html`. APIs `POST /turmas`, `POST /aulas`, `GET /alunos/pendentes`, `POST /alunos/aprovar` → **403**.
 

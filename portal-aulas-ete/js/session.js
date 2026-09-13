@@ -4,11 +4,11 @@ const currentPage = window.location.pathname.split('/').pop();
 
 const professorPages = [
   'dashboard-professor.html',
-  'professor-alunos.html',
-  'professor-turmas.html',
-  'professor-disciplinas.html',
-  'professor-aulas.html',
-  'professor-aula.html'
+  'professor-alunos.php',
+  'professor-turmas.php',
+  'professor-disciplinas.php',
+  'professor-aulas.php',
+  'professor-aula.php'
 ];
 
 const studentPages = [

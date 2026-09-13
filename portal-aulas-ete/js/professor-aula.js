@@ -1,5 +1,5 @@
 (function () {
-  if (!window.location.pathname.endsWith('professor-aula.html')) {
+  if (!window.location.pathname.endsWith('professor-aula.php')) {
     return;
   }
 
@@ -157,7 +157,7 @@
     const route = aulaId.value ? '/aulas/update' : '/aulas';
     try {
       await apiRequest(route, { method: 'POST', body: body });
-      window.location.href = 'professor-aulas.html';
+      window.location.href = 'professor-aulas.php';
     } catch (error) {
       window.alert(error.message);
     }
@@ -180,7 +180,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: id })
       });
-      window.location.href = 'professor-aulas.html';
+      window.location.href = 'professor-aulas.php';
     } catch (error) {
       excluirAulaBtn.disabled = false;
       window.alert(error.message);

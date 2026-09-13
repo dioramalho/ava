@@ -234,10 +234,10 @@ Uploads ficam em `backend/storage/uploads/`. O seed SQL não depende mais de `ma
 | `aluno-aulas.html` / `aluno-aula.html` | `student.js` | Lista e detalhe de aulas |
 | `aluno-aguardando.html` / `aluno-recusado.html` | — | Status do pedido |
 | `dashboard-professor.html` | `professor-dashboard.js` | Painel do professor |
-| `professor-turmas.html` | `professor-turmas.js` | Cadastro de turmas |
-| `professor-disciplinas.html` | `professor-disciplinas.js` | Cadastro de disciplinas |
-| `professor-aulas.html` / `professor-aula.html` | `professor-aulas.js` / `professor-aula.js` | Aulas (YouTube + PDF/DOCX) |
-| `professor-alunos.html` | `professor-alunos.js` | Aprovação / recusa de alunos |
+| `professor-turmas.php` | `professor-turmas.js` | Cadastro de turmas |
+| `professor-disciplinas.php` | `professor-disciplinas.js` | Cadastro de disciplinas |
+| `professor-aulas.php` / `professor-aula.php` | `professor-aulas.js` / `professor-aula.js` | Aulas (YouTube + PDF/DOCX) |
+| `professor-alunos.php` | `professor-alunos.js` | Aprovação / recusa de alunos |
 
 ### Módulos JS
 

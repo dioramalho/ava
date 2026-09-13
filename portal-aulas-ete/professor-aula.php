@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portal ETE | Nova aula</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
-  </head>
+<?php include 'shared/header-professor.php'; ?>
   <body class="ete-app-shell">
     <div class="ete-stripes"><span class="s-y"></span><span class="s-g"></span><span class="s-r"></span></div>
     <nav class="navbar navbar-expand-lg ete-navbar sticky-top">
@@ -22,10 +13,10 @@
         <div class="collapse navbar-collapse" id="navProf">
           <ul class="navbar-nav ms-auto align-items-lg-center gap-1 mt-3 mt-lg-0">
             <li class="nav-item"><a class="nav-link" href="dashboard-professor.html">Painel</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-turmas.html">Turmas</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-disciplinas.html">Disciplinas</a></li>
-            <li class="nav-item"><a class="nav-link active" href="professor-aulas.html">Aulas</a></li>
-            <li class="nav-item"><a class="nav-link" href="professor-alunos.html">Alunos</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-turmas.php">Turmas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-disciplinas.php">Disciplinas</a></li>
+            <li class="nav-item"><a class="nav-link active" href="professor-aulas.php">Aulas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-alunos.php">Alunos</a></li>
             <li class="nav-item ms-lg-2"><button id="logoutBtn" class="btn btn-sm btn-outline-light btn-touch">Sair</button></li>
           </ul>
         </div>
@@ -81,7 +72,7 @@
           <div class="col-12 d-flex flex-wrap gap-2">
             <button type="submit" class="btn btn-ete-primary btn-touch px-4">Salvar e publicar</button>
             <button type="button" id="excluirAulaBtn" class="btn btn-outline-danger btn-touch d-none">Excluir aula</button>
-            <a href="professor-aulas.html" class="btn btn-outline-secondary btn-touch">Cancelar</a>
+            <a href="professor-aulas.php" class="btn btn-outline-secondary btn-touch">Cancelar</a>
           </div>
         </form>
       </article>

@@ -104,11 +104,11 @@ O Composer (`portal-aulas-ete/backend`) só afeta o autoload PHP. Sem `vendor/`,
 **Passos:** em janela anônima, abrir:
 
 - `dashboard-professor.html`
-- `professor-turmas.html`
-- `professor-disciplinas.html`
-- `professor-aulas.html`
-- `professor-aula.html`
-- `professor-alunos.html`
+- `professor-turmas.php`
+- `professor-disciplinas.php`
+- `professor-aulas.php`
+- `professor-aula.php`
+- `professor-alunos.php`
 
 **Esperado:** redirecionar para `index.html`. `GET /auth/me` 401.
 
@@ -350,7 +350,7 @@ O Composer (`portal-aulas-ete/backend`) só afeta o autoload PHP. Sem `vendor/`,
 
 **Pré-condição:** aula com ≥1 YouTube, 1 PDF e 1 DOCX; nomes internos conhecidos em `backend/storage/uploads/`; existe pelo menos outra aula com arquivo próprio (JP-08.03).
 
-**Passos:** confirmar exclusão na lista (`professor-aulas.html`) e/ou na edição (`professor-aula.html?id=`).
+**Passos:** confirmar exclusão na lista (`professor-aulas.php`) e/ou na edição (`professor-aula.php?id=`).
 
 **Esperado:**
 
@@ -439,7 +439,7 @@ Aceitar, no mínimo:
 
 **Pré-condição:** aula com PDF + DOCX (JP-05.05); aluno aprovado na mesma turma.
 
-**Passos:** abrir `professor-aula.html?id=`; excluir só o PDF; confirmar.
+**Passos:** abrir `professor-aula.php?id=`; excluir só o PDF; confirmar.
 
 **Esperado:**
 
