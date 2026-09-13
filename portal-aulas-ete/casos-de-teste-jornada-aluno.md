@@ -324,6 +324,26 @@ index.html (Entrar / Solicitar cadastro)
 
 ---
 
+### JA-05.09 — Aula excluída some para o aluno (P0)
+
+**Pré-condição:** aluno aprovado na turma da aula; professor concluiu JP-05.09.
+
+**Passos:** atualizar Início e **Minhas aulas**; abrir `aluno-aula.html?id=` com o id antigo; `GET /aulas/detalhe?id=`.
+
+**Esperado:** a aula não aparece na lista nem no dashboard. Detalhe e API → **404** “Aula não encontrada.” (não 403 de outra turma). Sem título nem material.
+
+---
+
+### JA-05.10 — Arquivo excluído some no detalhe (P0)
+
+**Pré-condição:** aluno via o PDF e o DOCX da mesma aula; professor concluiu JP-06.07 (removeu só o PDF).
+
+**Passos:** atualizar `aluno-aula.html` da **mesma** aula (sem novo login).
+
+**Esperado:** PDF não aparece e não baixa; vídeos e DOCX permanecem.
+
+---
+
 ## JA-06 — Isolamento e autorização
 
 ### JA-06.01 — Aluno não acessa painel do professor (P0)
@@ -412,9 +432,10 @@ Simula o aluno do zero até consumir a aula, cruzando com o professor.
 | 4 | Entrar com o mesmo e-mail | Início com TDS-2025 |
 | 5 | Abrir Minhas aulas | Só aulas dessa turma |
 | 6 | Abrir uma aula com vídeo + PDF | Embed e download |
-| 7 | Colega em TDS-2024 | Não vê essa aula |
-| 8 | Login recusado (outro aluno) | Tela recusado |
-| 9 | Sair | Login público |
+| 7 | Professor remove um arquivo ou exclui a aula | JA-05.10 ou JA-05.09; item some sem novo login |
+| 8 | Colega em TDS-2024 | Não vê essa aula |
+| 9 | Login recusado (outro aluno) | Tela recusado |
+| 10 | Sair | Login público |
 
 **Falha em qualquer passo P0 desta tabela = jornada do aluno v1 não está pronta.**
 
@@ -456,6 +477,8 @@ Simula o aluno do zero até consumir a aula, cruzando com o professor.
 | JA-05.06 | Detalhe | Publicação | P0 |
 | JA-05.07 | Detalhe | Navegação | P2 |
 | JA-05.08 | Detalhe | XSS/embed | P1 |
+| JA-05.09 | Detalhe | Aula excluída | P0 |
+| JA-05.10 | Detalhe | Arquivo excluído | P0 |
 | JA-06.01 | Authz | Painel | P0 |
 | JA-06.02 | Authz | APIs | P1 |
 | JA-06.03 | Authz | Query turma | P0 |

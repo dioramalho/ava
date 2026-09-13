@@ -64,6 +64,8 @@ class App
         $this->get('/aulas/detalhe', 'AulaController', 'show');
         $this->post('/aulas', 'AulaController', 'store');
         $this->post('/aulas/update', 'AulaController', 'update');
+        $this->post('/aulas/delete', 'AulaController', 'destroy');
+        $this->post('/aulas/arquivos/delete', 'AulaController', 'destroyArquivo');
 
         $this->get('/alunos', 'AlunoController', 'index');
         $this->get('/alunos/pendentes', 'AlunoController', 'pendentes');

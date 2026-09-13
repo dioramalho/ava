@@ -205,6 +205,45 @@ class Aula extends BaseModel
         return $statement->execute();
     }
 
+    public function findArquivoById($id)
+    {
+        $statement = $this->connection->prepare(
+            'SELECT id, aula_id, nome_original, caminho_arquivo, extensao
+             FROM aula_arquivos
+             WHERE id = :id
+             LIMIT 1'
+        );
+        $statement->bindValue(':id', (int) $id, PDO::PARAM_INT);
+        $statement->execute();
+
+        $row = $statement->fetch();
+        return $row ? $row : null;
+    }
+
+    public function deleteArquivoById($id)
+    {
+        $statement = $this->connection->prepare('DELETE FROM aula_arquivos WHERE id = :id');
+        $statement->bindValue(':id', (int) $id, PDO::PARAM_INT);
+
+        return $statement->execute();
+    }
+
+    public function deleteArquivos($aulaId)
+    {
+        $statement = $this->connection->prepare('DELETE FROM aula_arquivos WHERE aula_id = :aula_id');
+        $statement->bindValue(':aula_id', (int) $aulaId, PDO::PARAM_INT);
+
+        return $statement->execute();
+    }
+
+    public function deleteById($id)
+    {
+        $statement = $this->connection->prepare('DELETE FROM aulas WHERE id = :id');
+        $statement->bindValue(':id', (int) $id, PDO::PARAM_INT);
+
+        return $statement->execute();
+    }
+
     public function addArquivo($data)
     {
         $statement = $this->connection->prepare(

@@ -286,6 +286,18 @@ Campos: `titulo`, `turma_id`, `disciplina_id`, `videos` (JSON de URLs YouTube), 
 
 Igual ao create, com `id` da aula.
 
+#### `POST /aulas/delete` — professor
+
+**Body:** `{ "id": 1 }`
+
+Remove a aula, os vídeos, os registros de arquivos e os PDF/DOCX em `storage/uploads/`. Aluno recebe 403.
+
+#### `POST /aulas/arquivos/delete` — professor
+
+**Body:** `{ "aula_id": 1, "id": 12 }`
+
+Remove o PDF/DOCX da aula (registro e arquivo em `storage/uploads/`). Usado na tela de edição.
+
 ### Alunos / solicitações (somente professor)
 
 O aluno é um `usuarios`, não a tabela antiga `alunos`.

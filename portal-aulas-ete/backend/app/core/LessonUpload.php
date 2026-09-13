@@ -54,6 +54,45 @@ class LessonUpload
         );
     }
 
+    /**
+     * Remove um arquivo de aula apenas se estiver na pasta de uploads.
+     *
+     * @param string $caminhoArquivo Valor gravado em aula_arquivos.caminho_arquivo
+     * @param array $config config['app']
+     * @return bool
+     */
+    public static function deleteStored($caminhoArquivo, $config)
+    {
+        $basename = basename(str_replace('\\', '/', (string) $caminhoArquivo));
+        if ($basename === '' || !preg_match('/^aula_[A-Za-z0-9]+\.(pdf|docx)$/', $basename)) {
+            return false;
+        }
+
+        $uploadDir = isset($config['upload_dir']) ? $config['upload_dir'] : '';
+        if ($uploadDir === '' || !is_dir($uploadDir)) {
+            return false;
+        }
+
+        $destination = $uploadDir . DIRECTORY_SEPARATOR . $basename;
+        if (!is_file($destination)) {
+            return true;
+        }
+
+        $uploadReal = realpath($uploadDir);
+        $fileReal = realpath($destination);
+        if ($uploadReal === false || $fileReal === false) {
+            return false;
+        }
+
+        $uploadPrefix = rtrim(str_replace('\\', '/', $uploadReal), '/') . '/';
+        $fileNorm = str_replace('\\', '/', $fileReal);
+        if (strpos($fileNorm, $uploadPrefix) !== 0) {
+            return false;
+        }
+
+        return unlink($fileReal);
+    }
+
     public static function isYoutubeUrl($url)
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
