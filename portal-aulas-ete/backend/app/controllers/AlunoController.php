@@ -4,43 +4,98 @@ class AlunoController extends Controller
 {
     public function index()
     {
-        $this->requireAuth();
-        $model = new Aluno();
+        $this->requireProfessor();
+        $model = new User();
 
         $this->json(array(
             'success' => true,
-            'data' => $model->all()
+            'data' => $model->listAprovados()
         ), 200);
     }
 
-    public function store(Request $request)
+    public function pendentes()
     {
-        $this->requireAuth();
-
-        $turmaId = (int) $request->input('turma_id', 0);
-        $nome = $request->input('nome', '');
-        $email = $request->input('email', '');
-        $matricula = $request->input('matricula', '');
-
-        if ($turmaId <= 0 || $nome === '' || $email === '' || $matricula === '') {
-            $this->json(array(
-                'success' => false,
-                'message' => 'Turma, nome, e-mail e matrícula são obrigatórios.'
-            ), 422);
-        }
-
-        $model = new Aluno();
-        $id = $model->create(array(
-            'turma_id' => $turmaId,
-            'nome' => $nome,
-            'email' => $email,
-            'matricula' => $matricula
-        ));
+        $this->requireProfessor();
+        $model = new User();
 
         $this->json(array(
             'success' => true,
-            'message' => 'Aluno cadastrado com sucesso.',
-            'id' => (int) $id
-        ), 201);
+            'data' => $model->listPendentes()
+        ), 200);
+    }
+
+    public function aprovar(Request $request)
+    {
+        $this->requireProfessor();
+
+        $id = (int) $request->input('id', 0);
+        $turmaId = (int) $request->input('turma_id', 0);
+
+        if ($id <= 0 || $turmaId <= 0) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Aluno e turma são obrigatórios.'
+            ), 422);
+        }
+
+        $turmaModel = new Turma();
+        if (!$turmaModel->findById($turmaId)) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Turma inválida.'
+            ), 422);
+        }
+
+        $userModel = new User();
+        $aluno = $userModel->findById($id);
+        if (!$aluno || $aluno['perfil'] !== 'aluno') {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Solicitação não encontrada.'
+            ), 404);
+        }
+
+        if ($aluno['status'] !== 'pendente') {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Esta solicitação já foi analisada.'
+            ), 409);
+        }
+
+        $userModel->approve($id, $turmaId);
+
+        $this->json(array(
+            'success' => true,
+            'message' => 'Aluno aprovado e vinculado à turma.'
+        ), 200);
+    }
+
+    public function recusar(Request $request)
+    {
+        $this->requireProfessor();
+
+        $id = (int) $request->input('id', 0);
+        if ($id <= 0) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'ID do aluno é obrigatório.'
+            ), 422);
+        }
+
+        $userModel = new User();
+        $aluno = $userModel->findById($id);
+        if (!$aluno || $aluno['perfil'] !== 'aluno' || $aluno['status'] !== 'pendente') {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Solicitação não encontrada.'
+            ), 404);
+        }
+
+        $userModel->reject($id);
+
+        $this->json(array(
+            'success' => true,
+            'message' => 'Solicitação recusada.'
+        ), 200);
     }
 }

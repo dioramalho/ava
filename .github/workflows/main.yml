@@ -4,33 +4,64 @@ on:
   push:
     branches:
       - develop
+  workflow_dispatch:
 
 jobs:
   ftp-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          server: ftp.diogoramalho.com.br
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
-          passive: true
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
 
-          local-dir: ./portal-aulas-ete/
-          server-dir: /public_html/ava.dev.diogoramalho.com.br/
+      - name: Install Composer dependencies
+        working-directory: portal-aulas-ete/backend
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-          dangerous-clean-slate: true
+      - name: Check FTP IPv4 port 21
+        run: |
+          python3 - <<'PY'
+          import socket, sys
+          sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+          sock.settimeout(15)
+          try:
+              sock.connect(("38.226.110.12", 21))
+              print("tcp21_ipv4_ok")
+          except Exception as exc:
+              print("tcp21_ipv4_fail", exc)
+              sys.exit(1)
+          finally:
+              sock.close()
+          PY
 
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/.github/**
-            **/backend/storage/uploads/**
+      - name: Install lftp
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Deploy via explicit FTPS
+        env:
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          lftp <<EOF
+          set dns:order inet
+          set ssl:verify-certificate no
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ftp:passive-mode true
+          set net:timeout 20
+          set net:max-retries 3
+          set net:reconnect-interval-base 5
+          open -u "$FTP_USERNAME","$FTP_PASSWORD" ftp://ftp.diogoramalho.com.br:21
+          lcd portal-aulas-ete
+          cd /public_html/ava.dev.diogoramalho.com.br/
+          mirror -R --verbose --delete --parallel=3 --exclude-glob .git* --exclude-glob node_modules/** --exclude-glob .github/** --exclude-glob backend/vendor/** --exclude-glob backend/storage/uploads/**
+          bye
+          EOF

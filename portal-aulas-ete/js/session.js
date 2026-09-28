@@ -1,17 +1,35 @@
 const loginForm = document.getElementById('loginForm');
 const loginAlert = document.getElementById('loginAlert');
-const protectedPages = ['dashboard.html', 'dashboard-professor.html'];
-const currentPage = window.location.pathname.split('/').pop();
+const currentPage = window.currentPortalFile ? window.currentPortalFile() : (window.location.pathname.split('/').pop() || '').toLowerCase();
+
+const professorPages = [
+  'dashboard-professor.html',
+  'professor-alunos.php',
+  'professor-turmas.php',
+  'professor-disciplinas.php',
+  'professor-aulas.php',
+  'professor-aula.php'
+];
+
+const studentPages = [
+  'dashboard.html',
+  'aluno-aulas.html',
+  'aluno-aula.html'
+];
 
 if (loginForm) {
   loginForm.addEventListener('submit', async function (event) {
     event.preventDefault();
 
+    if (loginAlert) {
+      loginAlert.classList.add('d-none');
+    }
+
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
 
     try {
-      await apiRequest('/auth/login', {
+      const response = await apiRequest('/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -22,8 +40,18 @@ if (loginForm) {
         })
       });
 
-      window.location.href = 'dashboard.html';
+      const user = response.data || {};
+      window.location.href = user.perfil === 'professor' ? 'dashboard-professor.html' : 'dashboard.html';
     } catch (error) {
+      const code = error.payload && error.payload.code;
+      if (code === 'aluno_pendente') {
+        window.location.href = 'aluno-aguardando.html';
+        return;
+      }
+      if (code === 'aluno_recusado') {
+        window.location.href = 'aluno-recusado.html';
+        return;
+      }
       if (loginAlert) {
         loginAlert.classList.remove('d-none');
         loginAlert.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i>' + (error.message || 'Login ou senha inválidos');
@@ -32,14 +60,19 @@ if (loginForm) {
   });
 }
 
-async function validateSession() {
-  if (!protectedPages.includes(currentPage)) {
-    return null;
-  }
+async function validatePortalSession(options) {
+  const config = options || {};
 
   try {
     const response = await apiRequest('/auth/me');
-    return response.data;
+    const user = response.data || null;
+
+    if (config.requiredProfile && user && user.perfil !== config.requiredProfile) {
+      window.location.href = user.perfil === 'professor' ? 'dashboard-professor.html' : 'dashboard.html';
+      return null;
+    }
+
+    return user;
   } catch (error) {
     window.location.href = 'index.html';
     return null;
@@ -54,12 +87,28 @@ if (logoutBtn) {
         method: 'POST'
       });
     } catch (error) {
-      // Em caso de erro, redireciona mesmo assim para evitar sessão presa no front.
+      // continua o redirect
     }
 
     window.location.href = 'index.html';
   });
 }
 
-window.validatePortalSession = validateSession;
-validateSession();
+window.validatePortalSession = validatePortalSession;
+
+function isListedPortalPage(list) {
+  if (typeof window.isCurrentPortalFile === 'function') {
+    return list.some(function (name) {
+      return window.isCurrentPortalFile(name);
+    });
+  }
+  return list.indexOf(currentPage) !== -1;
+}
+
+if (isListedPortalPage(professorPages)) {
+  validatePortalSession({ requiredProfile: 'professor' });
+}
+
+if (isListedPortalPage(studentPages)) {
+  validatePortalSession({ requiredProfile: 'aluno' });
+}

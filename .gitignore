@@ -1,0 +1,4 @@
+/portal-aulas-ete/backend/vendor/
+composer.phar
+*.log
+.DS_Store

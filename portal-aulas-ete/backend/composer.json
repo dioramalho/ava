@@ -1,0 +1,23 @@
+{
+    "name": "ete/portal-aulas",
+    "description": "Backend PHP do Portal de Aulas AVA / TDS",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=5.6.0"
+    },
+    "autoload": {
+        "classmap": [
+            "app/core/",
+            "app/controllers/",
+            "app/models/"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "5.6.40"
+        },
+        "sort-packages": true
+    }
+}
