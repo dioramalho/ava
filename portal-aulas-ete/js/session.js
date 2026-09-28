@@ -1,6 +1,6 @@
 const loginForm = document.getElementById('loginForm');
 const loginAlert = document.getElementById('loginAlert');
-const currentPage = window.location.pathname.split('/').pop();
+const currentPage = window.currentPortalFile ? window.currentPortalFile() : (window.location.pathname.split('/').pop() || '').toLowerCase();
 
 const professorPages = [
   'dashboard-professor.html',
@@ -96,10 +96,19 @@ if (logoutBtn) {
 
 window.validatePortalSession = validatePortalSession;
 
-if (professorPages.indexOf(currentPage) !== -1) {
+function isListedPortalPage(list) {
+  if (typeof window.isCurrentPortalFile === 'function') {
+    return list.some(function (name) {
+      return window.isCurrentPortalFile(name);
+    });
+  }
+  return list.indexOf(currentPage) !== -1;
+}
+
+if (isListedPortalPage(professorPages)) {
   validatePortalSession({ requiredProfile: 'professor' });
 }
 
-if (studentPages.indexOf(currentPage) !== -1) {
+if (isListedPortalPage(studentPages)) {
   validatePortalSession({ requiredProfile: 'aluno' });
 }

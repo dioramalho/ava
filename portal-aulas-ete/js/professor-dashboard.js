@@ -1,5 +1,5 @@
 (function () {
-  if (!window.location.pathname.endsWith('dashboard-professor.html')) {
+  if (!window.isCurrentPortalFile('dashboard-professor.html')) {
     return;
   }
 

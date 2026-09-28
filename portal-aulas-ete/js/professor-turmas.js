@@ -1,5 +1,5 @@
 (function () {
-  if (!window.location.pathname.endsWith('professor-turmas.php')) {
+  if (!window.isCurrentPortalFile('professor-turmas.php')) {
     return;
   }
 
@@ -17,7 +17,11 @@
     }
 
     form.addEventListener('submit', onSubmit);
-    await load();
+    try {
+      await load();
+    } catch (error) {
+      tabela.innerHTML = '<tr><td colspan="4" class="text-danger">' + escapeHtml(error.message) + '</td></tr>';
+    }
   }
 
   async function load() {

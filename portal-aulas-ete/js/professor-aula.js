@@ -1,5 +1,5 @@
 (function () {
-  if (!window.location.pathname.endsWith('professor-aula.php')) {
+  if (!window.isCurrentPortalFile('professor-aula.php')) {
     return;
   }
 

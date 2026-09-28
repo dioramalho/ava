@@ -1,5 +1,5 @@
 (function () {
-  if (!window.location.pathname.endsWith('professor-disciplinas.php')) {
+  if (!window.isCurrentPortalFile('professor-disciplinas.php')) {
     return;
   }
 
@@ -15,7 +15,11 @@
     }
 
     form.addEventListener('submit', onSubmit);
-    await load();
+    try {
+      await load();
+    } catch (error) {
+      lista.innerHTML = '<p class="text-danger mb-0">' + escapeHtml(error.message) + '</p>';
+    }
   }
 
   async function load() {

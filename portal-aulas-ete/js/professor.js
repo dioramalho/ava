@@ -1,5 +1,5 @@
 (function () {
-  const isProfessorPage = window.location.pathname.endsWith('dashboard-professor.html');
+  const isProfessorPage = window.isCurrentPortalFile('dashboard-professor.html');
   if (!isProfessorPage) {
     return;
   }

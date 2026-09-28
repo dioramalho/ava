@@ -1,5 +1,5 @@
 (function () {
-  if (!window.location.pathname.endsWith('professor-aulas.php')) {
+  if (!window.isCurrentPortalFile('professor-aulas.php')) {
     return;
   }
 
@@ -15,14 +15,18 @@
       return;
     }
 
-    const lists = await Promise.all([apiRequest('/turmas'), apiRequest('/disciplinas')]);
-    fillSelect(filtroTurma, lists[0].data || [], 'Todas as turmas');
-    fillSelect(filtroDisciplina, lists[1].data || [], 'Todas as disciplinas');
+    try {
+      const lists = await Promise.all([apiRequest('/turmas'), apiRequest('/disciplinas')]);
+      fillSelect(filtroTurma, lists[0].data || [], 'Todas as turmas');
+      fillSelect(filtroDisciplina, lists[1].data || [], 'Todas as disciplinas');
 
-    filtroTurma.addEventListener('change', load);
-    filtroDisciplina.addEventListener('change', load);
-    tabela.addEventListener('click', onTableClick);
-    await load();
+      filtroTurma.addEventListener('change', load);
+      filtroDisciplina.addEventListener('change', load);
+      tabela.addEventListener('click', onTableClick);
+      await load();
+    } catch (error) {
+      tabela.innerHTML = '<tr><td colspan="5" class="text-danger">' + escapeHtml(error.message) + '</td></tr>';
+    }
   }
 
   function fillSelect(select, items, emptyLabel) {

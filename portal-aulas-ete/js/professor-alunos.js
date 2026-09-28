@@ -1,5 +1,5 @@
 (function () {
-  if (!window.location.pathname.endsWith('professor-alunos.php')) {
+  if (!window.isCurrentPortalFile('professor-alunos.php')) {
     return;
   }
 
@@ -25,6 +25,7 @@
       renderAprovados(results[1].data || []);
     } catch (error) {
       pendentesWrap.innerHTML = '<p class="text-danger mb-0">' + escapeHtml(error.message) + '</p>';
+      tabela.innerHTML = '<tr><td colspan="4" class="text-danger">' + escapeHtml(error.message) + '</td></tr>';
     }
   }
 

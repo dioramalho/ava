@@ -17,6 +17,7 @@ class Controller
         }
 
         $this->refreshSessionUser();
+        session_write_close();
     }
 
     protected function refreshSessionUser()

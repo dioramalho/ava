@@ -48,3 +48,32 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
+
+function currentPortalFile() {
+  const path = String(window.location.pathname || '').replace(/\\/g, '/').replace(/\/+$/, '');
+  let file = path.split('/').pop() || '';
+  try {
+    file = decodeURIComponent(file);
+  } catch (error) {
+    // mantém o valor original se a URL estiver malformada
+  }
+  return file.toLowerCase();
+}
+
+function isCurrentPortalFile(name) {
+  const current = currentPortalFile();
+  const target = String(name || '').toLowerCase();
+  if (!target) {
+    return false;
+  }
+  if (current === target) {
+    return true;
+  }
+  const stripExt = function (value) {
+    return value.replace(/\.(html|php)$/i, '');
+  };
+  return stripExt(current) === stripExt(target);
+}
+
+window.currentPortalFile = currentPortalFile;
+window.isCurrentPortalFile = isCurrentPortalFile;

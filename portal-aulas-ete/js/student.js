@@ -1,5 +1,5 @@
 (function () {
-  const page = window.location.pathname.split('/').pop();
+  const page = window.currentPortalFile ? window.currentPortalFile() : (window.location.pathname.split('/').pop() || '').toLowerCase();
 
   function firstName(nome) {
     const parts = String(nome || '').trim().split(/\s+/);
