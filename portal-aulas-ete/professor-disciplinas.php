@@ -32,8 +32,9 @@
       <section class="row g-4">
         <div class="col-lg-4">
           <article class="ete-card p-4">
-            <h2 class="h5 fw-bold mb-3">Nova disciplina</h2>
+            <h2 class="h5 fw-bold mb-3" id="disciplinaFormTitulo">Nova disciplina</h2>
             <form id="disciplinaForm" class="d-grid gap-3">
+              <input type="hidden" id="discId" />
               <div>
                 <label class="form-label fw-semibold" for="discCodigo">Código</label>
                 <input id="discCodigo" class="form-control" placeholder="Ex.: POO" required />
@@ -42,7 +43,8 @@
                 <label class="form-label fw-semibold" for="discTitulo">Título</label>
                 <input id="discTitulo" class="form-control" placeholder="Ex.: Programação Orientada a Objetos" required />
               </div>
-              <button type="submit" class="btn btn-ete-primary btn-touch">Cadastrar disciplina</button>
+              <button type="submit" class="btn btn-ete-primary btn-touch" id="discSubmit">Cadastrar disciplina</button>
+              <button type="button" class="btn btn-outline-secondary btn-touch d-none" id="discCancelar">Cancelar edição</button>
             </form>
           </article>
         </div>
@@ -58,8 +60,8 @@
     </main>
     <footer class="ete-footer py-3 text-center small">Escola Técnica Estadual — Portal de Aulas</footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="js/api.js?v=6"></script>
+    <script src="js/api.js?v=7"></script>
     <script src="js/session.js?v=6"></script>
-    <script src="js/professor-disciplinas.js?v=6"></script>
+    <script src="js/professor-disciplinas.js?v=7"></script>
   </body>
 </html>

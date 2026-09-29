@@ -75,5 +75,19 @@ function isCurrentPortalFile(name) {
   return stripExt(current) === stripExt(target);
 }
 
+function showPortalFeedback(message, variant) {
+  const alert = document.createElement('div');
+  alert.className = 'alert alert-' + (variant || 'success') + ' position-fixed top-0 end-0 m-3 shadow';
+  alert.style.zIndex = '1080';
+  alert.setAttribute('role', 'status');
+  alert.textContent = message;
+  document.body.appendChild(alert);
+
+  setTimeout(function () {
+    alert.remove();
+  }, 3500);
+}
+
 window.currentPortalFile = currentPortalFile;
 window.isCurrentPortalFile = isCurrentPortalFile;
+window.showPortalFeedback = showPortalFeedback;

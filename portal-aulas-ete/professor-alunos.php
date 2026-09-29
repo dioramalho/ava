@@ -52,20 +52,55 @@
                   <th>Contato</th>
                   <th>Turma</th>
                   <th>Status</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody id="alunosTableBody">
-                <tr><td colspan="4" class="text-muted">Carregando...</td></tr>
+                <tr><td colspan="5" class="text-muted">Carregando...</td></tr>
               </tbody>
             </table>
           </div>
         </article>
       </section>
     </main>
+
+    <div class="modal fade" id="alunoModal" tabindex="-1" aria-labelledby="alunoModalTitulo" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <form class="modal-content" id="alunoForm">
+          <div class="modal-header">
+            <h2 class="modal-title h5 fw-bold" id="alunoModalTitulo">Editar aluno</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body d-grid gap-3">
+            <input type="hidden" id="alunoId" />
+            <div>
+              <label class="form-label fw-semibold" for="alunoNome">Nome</label>
+              <input id="alunoNome" class="form-control" required />
+            </div>
+            <div>
+              <label class="form-label fw-semibold" for="alunoEmail">E-mail (login)</label>
+              <input id="alunoEmail" type="email" class="form-control" required />
+            </div>
+            <div>
+              <label class="form-label fw-semibold" for="alunoCelular">Celular</label>
+              <input id="alunoCelular" class="form-control" />
+            </div>
+            <div>
+              <label class="form-label fw-semibold" for="alunoTurma">Turma</label>
+              <select id="alunoTurma" class="form-select" required></select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary btn-touch" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-ete-primary btn-touch" id="alunoSubmit">Salvar alterações</button>
+          </div>
+        </form>
+      </div>
+    </div>
     <footer class="ete-footer py-3 text-center small">Escola Técnica Estadual — Portal de Aulas</footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="js/api.js?v=6"></script>
+    <script src="js/api.js?v=7"></script>
     <script src="js/session.js?v=6"></script>
-    <script src="js/professor-alunos.js?v=6"></script>
+    <script src="js/professor-alunos.js?v=7"></script>
   </body>
 </html>

@@ -10,6 +10,7 @@ class AulaController extends Controller
         $model = new Aula();
         $turmaId = (int) $request->query('turma_id', 0);
         $disciplinaId = (int) $request->query('disciplina_id', 0);
+        $termo = $request->query('termo', '');
 
         if ($user['perfil'] === 'aluno') {
             $turmaId = isset($user['turma_id']) ? (int) $user['turma_id'] : 0;
@@ -21,7 +22,7 @@ class AulaController extends Controller
             }
         }
 
-        $data = $model->all($turmaId, $disciplinaId);
+        $data = $model->all($turmaId, $disciplinaId, $termo);
 
         $this->json(array(
             'success' => true,

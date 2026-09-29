@@ -52,6 +52,28 @@ class Disciplina extends BaseModel
         return $this->connection->lastInsertId();
     }
 
+    public function update($id, $data)
+    {
+        $statement = $this->connection->prepare(
+            'UPDATE disciplinas SET codigo = :codigo, titulo = :titulo WHERE id = :id'
+        );
+
+        return $statement->execute(array(
+            ':codigo' => $data['codigo'],
+            ':titulo' => $data['titulo'],
+            ':id' => (int) $id
+        ));
+    }
+
+    public function delete($id)
+    {
+        $statement = $this->connection->prepare('DELETE FROM disciplinas WHERE id = :id');
+        $statement->bindValue(':id', (int) $id, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->rowCount() > 0;
+    }
+
     public function countAll()
     {
         $row = $this->connection->query('SELECT COUNT(*) AS total FROM disciplinas')->fetch();

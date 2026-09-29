@@ -97,7 +97,7 @@ class User extends BaseModel
 
     public function listAprovados()
     {
-        $sql = 'SELECT usuarios.id, usuarios.nome, usuarios.email, usuarios.celular, usuarios.status,
+        $sql = 'SELECT usuarios.id, usuarios.nome, usuarios.login, usuarios.email, usuarios.celular, usuarios.status,
                        turmas.id AS turma_id, turmas.codigo AS turma_codigo, turmas.titulo AS turma_titulo
                 FROM usuarios
                 INNER JOIN turmas ON turmas.id = usuarios.turma_id
@@ -143,6 +143,66 @@ class User extends BaseModel
             ':perfil' => 'aluno',
             ':atual' => 'pendente'
         ));
+    }
+
+    public function findByEmailOrLoginExcept($value, $exceptId)
+    {
+        $statement = $this->connection->prepare(
+            'SELECT id FROM usuarios
+             WHERE (email = :email OR login = :login) AND id <> :id
+             LIMIT 1'
+        );
+        $statement->execute(array(
+            ':email' => $value,
+            ':login' => $value,
+            ':id' => (int) $exceptId
+        ));
+
+        return $statement->fetch();
+    }
+
+    public function updateAluno($id, $data)
+    {
+        $statement = $this->connection->prepare(
+            'UPDATE usuarios
+             SET nome = :nome, login = :login, email = :email, celular = :celular, turma_id = :turma_id
+             WHERE id = :id AND perfil = :perfil'
+        );
+
+        return $statement->execute(array(
+            ':nome' => $data['nome'],
+            ':login' => $data['login'],
+            ':email' => $data['email'],
+            ':celular' => $data['celular'],
+            ':turma_id' => (int) $data['turma_id'],
+            ':id' => (int) $id,
+            ':perfil' => 'aluno'
+        ));
+    }
+
+    public function deleteAluno($id)
+    {
+        $statement = $this->connection->prepare(
+            'DELETE FROM usuarios WHERE id = :id AND perfil = :perfil'
+        );
+        $statement->execute(array(
+            ':id' => (int) $id,
+            ':perfil' => 'aluno'
+        ));
+
+        return $statement->rowCount() > 0;
+    }
+
+    public function countAlunosByTurma($turmaId)
+    {
+        $statement = $this->connection->prepare(
+            'SELECT COUNT(*) AS total FROM usuarios WHERE turma_id = :turma_id'
+        );
+        $statement->bindValue(':turma_id', (int) $turmaId, PDO::PARAM_INT);
+        $statement->execute();
+        $row = $statement->fetch();
+
+        return $row ? (int) $row['total'] : 0;
     }
 
     public function countAprovados()
