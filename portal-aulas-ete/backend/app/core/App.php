@@ -56,9 +56,12 @@ class App
         $this->get('/turmas', 'TurmaController', 'index');
         $this->post('/turmas', 'TurmaController', 'store');
         $this->post('/turmas/update', 'TurmaController', 'update');
+        $this->post('/turmas/delete', 'TurmaController', 'destroy');
 
         $this->get('/disciplinas', 'DisciplinaController', 'index');
         $this->post('/disciplinas', 'DisciplinaController', 'store');
+        $this->post('/disciplinas/update', 'DisciplinaController', 'update');
+        $this->post('/disciplinas/delete', 'DisciplinaController', 'destroy');
 
         $this->get('/aulas', 'AulaController', 'index');
         $this->get('/aulas/detalhe', 'AulaController', 'show');
@@ -71,6 +74,8 @@ class App
         $this->get('/alunos/pendentes', 'AlunoController', 'pendentes');
         $this->post('/alunos/aprovar', 'AlunoController', 'aprovar');
         $this->post('/alunos/recusar', 'AlunoController', 'recusar');
+        $this->post('/alunos/update', 'AlunoController', 'update');
+        $this->post('/alunos/delete', 'AlunoController', 'destroy');
     }
 
     private function get($route, $controller, $action)

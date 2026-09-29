@@ -87,4 +87,59 @@ class TurmaController extends Controller
             'message' => 'Turma atualizada com sucesso.'
         ), 200);
     }
+
+    public function destroy(Request $request)
+    {
+        $this->requireProfessor();
+
+        $id = (int) $request->input('id', 0);
+        if ($id <= 0) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'ID da turma é obrigatório.'
+            ), 422);
+        }
+
+        $model = new Turma();
+        if (!$model->findById($id)) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Turma não encontrada.'
+            ), 404);
+        }
+
+        $aulaModel = new Aula();
+        $userModel = new User();
+        $totalAulas = $aulaModel->countByTurma($id);
+        $totalAlunos = $userModel->countAlunosByTurma($id);
+
+        if ($totalAulas > 0 || $totalAlunos > 0) {
+            $vinculos = array();
+            if ($totalAlunos > 0) {
+                $vinculos[] = $totalAlunos . ' aluno(s)';
+            }
+            if ($totalAulas > 0) {
+                $vinculos[] = $totalAulas . ' aula(s)';
+            }
+
+            $this->json(array(
+                'success' => false,
+                'message' => 'Não é possível excluir a turma: ela ainda tem ' . implode(' e ', $vinculos) . ' vinculado(s). Mova ou exclua esses registros antes.'
+            ), 409);
+        }
+
+        try {
+            $model->delete($id);
+        } catch (PDOException $exception) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Não foi possível excluir a turma: ainda há registros vinculados.'
+            ), 409);
+        }
+
+        $this->json(array(
+            'success' => true,
+            'message' => 'Turma excluída com sucesso.'
+        ), 200);
+    }
 }

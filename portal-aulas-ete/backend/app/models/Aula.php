@@ -2,7 +2,7 @@
 
 class Aula extends BaseModel
 {
-    public function all($turmaId, $disciplinaId)
+    public function all($turmaId, $disciplinaId, $termo = '')
     {
         $sql = 'SELECT aulas.id, aulas.titulo, aulas.created_at,
                        turmas.id AS turma_id, turmas.codigo AS turma_codigo, turmas.titulo AS turma_titulo,
@@ -24,6 +24,20 @@ class Aula extends BaseModel
         if ($disciplinaId > 0) {
             $sql .= ' AND aulas.disciplina_id = :disciplina_id';
             $params[':disciplina_id'] = $disciplinaId;
+        }
+
+        $termo = trim((string) $termo);
+        if ($termo !== '') {
+            // '!' como escape funciona igual no MySQL e no SQLite.
+            $like = '%' . str_replace(array('!', '%', '_'), array('!!', '!%', '!_'), $termo) . '%';
+            $campos = array('aulas.titulo', 'turmas.codigo', 'turmas.titulo', 'disciplinas.codigo', 'disciplinas.titulo');
+            $condicoes = array();
+            foreach ($campos as $indice => $campo) {
+                $chave = ':termo' . $indice;
+                $condicoes[] = $campo . ' LIKE ' . $chave . " ESCAPE '!'";
+                $params[$chave] = $like;
+            }
+            $sql .= ' AND (' . implode(' OR ', $condicoes) . ')';
         }
 
         $sql .= ' ORDER BY aulas.created_at DESC';
@@ -262,6 +276,26 @@ class Aula extends BaseModel
     public function countAll()
     {
         $row = $this->connection->query('SELECT COUNT(*) AS total FROM aulas')->fetch();
+
+        return $row ? (int) $row['total'] : 0;
+    }
+
+    public function countByTurma($turmaId)
+    {
+        $statement = $this->connection->prepare('SELECT COUNT(*) AS total FROM aulas WHERE turma_id = :turma_id');
+        $statement->bindValue(':turma_id', (int) $turmaId, PDO::PARAM_INT);
+        $statement->execute();
+        $row = $statement->fetch();
+
+        return $row ? (int) $row['total'] : 0;
+    }
+
+    public function countByDisciplina($disciplinaId)
+    {
+        $statement = $this->connection->prepare('SELECT COUNT(*) AS total FROM aulas WHERE disciplina_id = :disciplina_id');
+        $statement->bindValue(':disciplina_id', (int) $disciplinaId, PDO::PARAM_INT);
+        $statement->execute();
+        $row = $statement->fetch();
 
         return $row ? (int) $row['total'] : 0;
     }

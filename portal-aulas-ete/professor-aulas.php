@@ -33,18 +33,27 @@
       </section>
 
       <article class="ete-card p-3 p-md-4">
-        <div class="row g-2 mb-3">
-          <div class="col-md-4">
+        <form class="row g-2 mb-3" id="filtrosAulas" role="search">
+          <div class="col-md-4 col-lg-3">
             <select class="form-select" id="filtroTurma" aria-label="Filtrar por turma">
               <option value="">Todas as turmas</option>
             </select>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4 col-lg-3">
             <select class="form-select" id="filtroDisciplina" aria-label="Filtrar por disciplina">
               <option value="">Todas as disciplinas</option>
             </select>
           </div>
-        </div>
+          <div class="col-md-4 col-lg-4">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
+              <input type="search" class="form-control" id="filtroTermo" placeholder="Buscar por título, turma ou disciplina" aria-label="Buscar aulas" />
+            </div>
+          </div>
+          <div class="col-md-12 col-lg-2 d-grid">
+            <button type="button" class="btn btn-outline-secondary" id="limparFiltros">Limpar filtros</button>
+          </div>
+        </form>
         <div class="table-responsive">
           <table class="table ete-table align-middle mb-0">
             <thead>
@@ -65,8 +74,8 @@
     </main>
     <footer class="ete-footer py-3 text-center small">Escola Técnica Estadual — Portal de Aulas</footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="js/api.js?v=6"></script>
+    <script src="js/api.js?v=7"></script>
     <script src="js/session.js?v=6"></script>
-    <script src="js/professor-aulas.js?v=6"></script>
+    <script src="js/professor-aulas.js?v=7"></script>
   </body>
 </html>

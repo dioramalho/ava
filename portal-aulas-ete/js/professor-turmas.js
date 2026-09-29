@@ -37,7 +37,10 @@
         '<td><strong>' + escapeHtml(turma.codigo) + '</strong></td>' +
         '<td>' + escapeHtml(turma.titulo) + '</td>' +
         '<td>' + escapeHtml(turma.alunos_count) + '</td>' +
-        '<td class="text-end"><button class="btn btn-sm btn-outline-secondary" type="button" data-edit="' + turma.id + '">Editar</button></td>' +
+        '<td class="text-end text-nowrap">' +
+        '<button class="btn btn-sm btn-outline-secondary me-1" type="button" data-edit="' + turma.id + '">Editar</button>' +
+        '<button class="btn btn-sm btn-outline-danger" type="button" data-delete="' + turma.id + '">Excluir</button>' +
+        '</td>' +
         '</tr>';
     }).join('');
 
@@ -54,6 +57,45 @@
         botao.textContent = 'Salvar alterações';
       });
     });
+
+    tabela.querySelectorAll('[data-delete]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        const id = button.getAttribute('data-delete');
+        const turma = turmas.filter(function (item) { return String(item.id) === String(id); })[0];
+        if (turma) {
+          excluir(button, turma);
+        }
+      });
+    });
+  }
+
+  function resetForm() {
+    campoId.value = '';
+    form.reset();
+    botao.textContent = 'Cadastrar turma';
+  }
+
+  async function excluir(button, turma) {
+    if (!window.confirm('Excluir a turma "' + turma.codigo + '"? Esta ação não pode ser desfeita.')) {
+      return;
+    }
+
+    button.disabled = true;
+    try {
+      const response = await apiRequest('/turmas/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: turma.id })
+      });
+      if (String(campoId.value) === String(turma.id)) {
+        resetForm();
+      }
+      await load();
+      window.showPortalFeedback(response.message || 'Turma excluída.', 'success');
+    } catch (error) {
+      button.disabled = false;
+      window.showPortalFeedback(error.message, 'danger');
+    }
   }
 
   async function onSubmit(event) {
@@ -78,9 +120,7 @@
           body: JSON.stringify(payload)
         });
       }
-      campoId.value = '';
-      form.reset();
-      botao.textContent = 'Cadastrar turma';
+      resetForm();
       await load();
     } catch (error) {
       window.alert(error.message);
