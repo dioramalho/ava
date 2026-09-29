@@ -71,6 +71,8 @@ class App
         $this->get('/alunos/pendentes', 'AlunoController', 'pendentes');
         $this->post('/alunos/aprovar', 'AlunoController', 'aprovar');
         $this->post('/alunos/recusar', 'AlunoController', 'recusar');
+
+        $this->post('/email/enviar', 'EmailController', 'enviar');
     }
 
     private function get($route, $controller, $action)

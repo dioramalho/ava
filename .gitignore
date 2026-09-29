@@ -1,4 +1,5 @@
 /portal-aulas-ete/backend/vendor/
+/portal-aulas-ete/backend/config/mail.local.php
 composer.phar
 *.log
 .DS_Store
