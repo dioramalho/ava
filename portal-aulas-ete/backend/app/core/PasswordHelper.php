@@ -17,10 +17,13 @@ class PasswordHelper
             return false;
         }
 
-        if (strpos($storedHash, '$2y$') === 0 || strpos($storedHash, '$2a$') === 0) {
-            return password_verify($plain, $storedHash);
+        $storedHash = trim((string) $storedHash);
+        $plain = (string) $plain;
+
+        if (strpos($storedHash, '$2y$') === 0 || strpos($storedHash, '$2a$') === 0 || strpos($storedHash, '$2b$') === 0) {
+            return function_exists('password_verify') ? password_verify($plain, $storedHash) : false;
         }
 
-        return sha1($plain) === $storedHash;
+        return hash_equals($storedHash, sha1($plain));
     }
 }
