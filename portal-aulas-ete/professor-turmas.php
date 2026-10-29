@@ -49,7 +49,10 @@
         </div>
         <div class="col-lg-8">
           <article class="ete-card p-4">
-            <h2 class="h5 fw-bold mb-3">Turmas cadastradas</h2>
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <h2 class="h5 fw-bold mb-0" id="turmasListaTitulo">Turmas cadastradas</h2>
+              <button type="button" class="btn btn-sm btn-outline-secondary" id="turmasArquivadasBtn">Turmas arquivadas</button>
+            </div>
             <div class="table-responsive">
               <table class="table ete-table align-middle mb-0">
                 <thead>
@@ -73,6 +76,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="js/api.js?v=7"></script>
     <script src="js/session.js?v=6"></script>
-    <script src="js/professor-turmas.js?v=7"></script>
+    <script src="js/professor-turmas.js?v=8"></script>
   </body>
 </html>

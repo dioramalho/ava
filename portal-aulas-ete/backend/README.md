@@ -269,9 +269,13 @@ Resumo para o dashboard do aluno aprovado.
 
 ### Turmas (somente professor)
 
+Uma turma só é excluída quando nenhum registro depende dela (`usuarios.turma_id` ou `aulas.turma_id`). Se houver vínculo, o professor arquiva: `arquivada = 1`. A lista padrão, o painel, o select de nova aula e a aprovação de aluno ignoram arquivadas. O aluno já vinculado continua vendo as aulas da turma. O código continua único, inclusive entre arquivadas.
+
 #### `GET /turmas`
 
-Lista turmas (`codigo`, `titulo`).
+Lista turmas ativas (`codigo`, `titulo`, `arquivada`, `alunos_count`).
+
+`GET /turmas?arquivadas=1` lista só as arquivadas.
 
 #### `POST /turmas`
 
@@ -280,6 +284,24 @@ Lista turmas (`codigo`, `titulo`).
 #### `POST /turmas/update`
 
 **Body:** `id`, `codigo`, `titulo`.
+
+#### `POST /turmas/delete`
+
+**Body:** `{ "id": 1 }`
+
+**200** turma removida. **409** se ainda existir aluno (qualquer status com `turma_id`) ou aula; a resposta traz `can_archive: true`. **404** se o id não existe.
+
+#### `POST /turmas/arquivar`
+
+**Body:** `{ "id": 1 }`
+
+Marca `arquivada = 1`. Não apaga alunos nem aulas.
+
+#### `POST /turmas/desarquivar`
+
+**Body:** `{ "id": 1 }`
+
+Marca `arquivada = 0`. A turma volta para a lista ativa e para os selects.
 
 ### Disciplinas (somente professor)
 

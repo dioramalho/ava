@@ -129,7 +129,7 @@ O front não usa npm. O **Composer** vale só para o backend (`backend/composer.
 
 ### Gestão do professor
 
-- `professor-turmas.php` — CRUD de código/título
+- `professor-turmas.php` — código/título; exclui se não houver vínculo; com aluno ou aula, arquiva e a turma só volta em **Turmas arquivadas**
 - `professor-disciplinas.php` — catálogo
 - `professor-aulas.php` / `professor-aula.php` — publicar aula (YouTube + arquivos)
 - `professor-alunos.php` — aprovar (escolhe a turma) ou recusar
@@ -145,7 +145,7 @@ O front não usa npm. O **Composer** vale só para o backend (`backend/composer.
 | `cadastro-aluno.js` | Pedido público |
 | `student.js` | Painel, lista e detalhe de aulas do aluno |
 | `professor-dashboard.js` | Painel docente |
-| `professor-turmas.js` | Turmas |
+| `professor-turmas.js` | Turmas: cadastro, exclusão e arquivamento |
 | `professor-disciplinas.js` | Disciplinas |
 | `professor-aulas.js` | Lista de aulas |
 | `professor-aula.js` | Criar/editar aula |
