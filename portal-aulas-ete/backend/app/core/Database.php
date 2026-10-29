@@ -41,6 +41,7 @@ class Database
 
         self::$connection = new PDO($dsn, $db['username'], $db['password'], $options);
         self::$connection->exec($names);
+        self::ensureTurmaArquivadaColumn();
 
         return self::$connection;
     }
@@ -62,6 +63,40 @@ class Database
         if ($isNewDatabase) {
             self::bootstrapSqlite(self::$connection);
         }
+
+        self::ensureTurmaArquivadaColumn();
+    }
+
+    /**
+     * Bancos já criados não recebem o schema completo de novo.
+     * A coluna entra só quando ainda não existe.
+     */
+    private static function ensureTurmaArquivadaColumn()
+    {
+        $driver = self::$connection->getAttribute(PDO::ATTR_DRIVER_NAME);
+
+        if ($driver === 'sqlite') {
+            $columns = self::$connection->query('PRAGMA table_info(turmas)')->fetchAll();
+            foreach ($columns as $column) {
+                if (isset($column['name']) && $column['name'] === 'arquivada') {
+                    return;
+                }
+            }
+
+            self::$connection->exec(
+                'ALTER TABLE turmas ADD COLUMN arquivada INTEGER NOT NULL DEFAULT 0'
+            );
+            return;
+        }
+
+        $statement = self::$connection->query("SHOW COLUMNS FROM turmas LIKE 'arquivada'");
+        if ($statement && $statement->fetch()) {
+            return;
+        }
+
+        self::$connection->exec(
+            'ALTER TABLE turmas ADD COLUMN arquivada TINYINT(1) NOT NULL DEFAULT 0'
+        );
     }
 
     private static function bootstrapSqlite(PDO $connection)

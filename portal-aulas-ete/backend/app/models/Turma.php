@@ -2,17 +2,22 @@
 
 class Turma extends BaseModel
 {
-    public function all()
+    public function all($somenteArquivadas = false)
     {
-        $sql = 'SELECT turmas.id, turmas.codigo, turmas.titulo, turmas.created_at,
+        $sql = 'SELECT turmas.id, turmas.codigo, turmas.titulo, turmas.arquivada, turmas.created_at,
                        (SELECT COUNT(*) FROM usuarios
                         WHERE usuarios.turma_id = turmas.id
                           AND usuarios.perfil = \'aluno\'
                           AND usuarios.status = \'aprovado\') AS alunos_count
                 FROM turmas
+                WHERE turmas.arquivada = :arquivada
                 ORDER BY turmas.codigo ASC';
 
-        return $this->connection->query($sql)->fetchAll();
+        $statement = $this->connection->prepare($sql);
+        $statement->bindValue(':arquivada', $somenteArquivadas ? 1 : 0, PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetchAll();
     }
 
     public function findById($id)
@@ -78,9 +83,22 @@ class Turma extends BaseModel
         return $statement->rowCount() > 0;
     }
 
+    public function setArquivada($id, $arquivada)
+    {
+        $statement = $this->connection->prepare(
+            'UPDATE turmas SET arquivada = :arquivada WHERE id = :id'
+        );
+        $statement->bindValue(':arquivada', $arquivada ? 1 : 0, PDO::PARAM_INT);
+        $statement->bindValue(':id', (int) $id, PDO::PARAM_INT);
+
+        return $statement->execute();
+    }
+
     public function countAll()
     {
-        $row = $this->connection->query('SELECT COUNT(*) AS total FROM turmas')->fetch();
+        $row = $this->connection->query(
+            'SELECT COUNT(*) AS total FROM turmas WHERE arquivada = 0'
+        )->fetch();
 
         return $row ? (int) $row['total'] : 0;
     }

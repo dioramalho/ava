@@ -57,6 +57,8 @@ class App
         $this->post('/turmas', 'TurmaController', 'store');
         $this->post('/turmas/update', 'TurmaController', 'update');
         $this->post('/turmas/delete', 'TurmaController', 'destroy');
+        $this->post('/turmas/arquivar', 'TurmaController', 'archive');
+        $this->post('/turmas/desarquivar', 'TurmaController', 'unarchive');
 
         $this->get('/disciplinas', 'DisciplinaController', 'index');
         $this->post('/disciplinas', 'DisciplinaController', 'store');

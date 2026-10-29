@@ -2,14 +2,15 @@
 
 class TurmaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $this->requireProfessor();
         $model = new Turma();
+        $somenteArquivadas = (int) $request->query('arquivadas', 0) === 1;
 
         $this->json(array(
             'success' => true,
-            'data' => $model->all()
+            'data' => $model->all($somenteArquivadas)
         ), 200);
     }
 
@@ -124,7 +125,8 @@ class TurmaController extends Controller
 
             $this->json(array(
                 'success' => false,
-                'message' => 'Não é possível excluir a turma: ela ainda tem ' . implode(' e ', $vinculos) . ' vinculado(s). Mova ou exclua esses registros antes.'
+                'can_archive' => true,
+                'message' => 'Não é possível excluir a turma: ela ainda tem ' . implode(' e ', $vinculos) . ' vinculado(s). Você pode arquivá-la.'
             ), 409);
         }
 
@@ -133,13 +135,52 @@ class TurmaController extends Controller
         } catch (PDOException $exception) {
             $this->json(array(
                 'success' => false,
-                'message' => 'Não foi possível excluir a turma: ainda há registros vinculados.'
+                'can_archive' => true,
+                'message' => 'Não foi possível excluir a turma: ainda há registros vinculados. Você pode arquivá-la.'
             ), 409);
         }
 
         $this->json(array(
             'success' => true,
             'message' => 'Turma excluída com sucesso.'
+        ), 200);
+    }
+
+    public function archive(Request $request)
+    {
+        $this->changeArquivada($request, true, 'Turma arquivada. Ela só aparece em Turmas arquivadas.');
+    }
+
+    public function unarchive(Request $request)
+    {
+        $this->changeArquivada($request, false, 'Turma reativada.');
+    }
+
+    private function changeArquivada(Request $request, $arquivada, $message)
+    {
+        $this->requireProfessor();
+
+        $id = (int) $request->input('id', 0);
+        if ($id <= 0) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'ID da turma é obrigatório.'
+            ), 422);
+        }
+
+        $model = new Turma();
+        if (!$model->findById($id)) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Turma não encontrada.'
+            ), 404);
+        }
+
+        $model->setArquivada($id, $arquivada);
+
+        $this->json(array(
+            'success' => true,
+            'message' => $message
         ), 200);
     }
 }

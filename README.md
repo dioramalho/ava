@@ -205,7 +205,7 @@ Response JSON { success, message?, data?, id?, error? }
 
 - Principal: query string `?route=/caminho`
 - Alternativo: path após `SCRIPT_NAME` (Apache + rewrite)
-- Mutações usam **POST** (sem PUT/DELETE REST): `/turmas/update`, `/aulas/update`, `/aulas/delete`, `/aulas/arquivos/delete`, `/alunos/aprovar`, `/alunos/recusar`
+- Mutações usam **POST** (sem PUT/DELETE REST): `/turmas/update`, `/turmas/delete`, `/turmas/arquivar`, `/turmas/desarquivar`, `/aulas/update`, `/aulas/delete`, `/aulas/arquivos/delete`, `/alunos/aprovar`, `/alunos/recusar`
 
 ---
 
@@ -223,7 +223,7 @@ aulas ── turma + disciplina
 | Tabela | Função |
 |--------|--------|
 | `usuarios` | Contas: `nome`, `login`, `senha`, `perfil`, `email`, `celular`, `status` (`pendente` \| `aprovado` \| `recusado`), `turma_id` |
-| `turmas` | `codigo` + `titulo` |
+| `turmas` | `codigo` + `titulo` + `arquivada` (`0` ativa, `1` arquivada). Arquivada some das listas e dos selects; o aluno já vinculado continua vendo as aulas |
 | `disciplinas` | Catálogo: `codigo` + `titulo` |
 | `aulas` | Aula publicada (turma + disciplina + título) |
 | `aula_videos` | URLs YouTube da aula |
@@ -244,7 +244,7 @@ Uploads ficam em `backend/storage/uploads/`. O seed SQL não depende mais de `ma
 | `aluno-aulas.html` / `aluno-aula.html` | `student.js` | Lista e detalhe de aulas |
 | `aluno-aguardando.html` / `aluno-recusado.html` | — | Status do pedido |
 | `dashboard-professor.html` | `professor-dashboard.js` | Painel do professor |
-| `professor-turmas.php` | `professor-turmas.js` | Cadastro de turmas |
+| `professor-turmas.php` | `professor-turmas.js` | Cadastro, exclusão e arquivamento de turmas |
 | `professor-disciplinas.php` | `professor-disciplinas.js` | Cadastro de disciplinas |
 | `professor-aulas.php` / `professor-aula.php` | `professor-aulas.js` / `professor-aula.js` | Aulas (YouTube + PDF/DOCX) |
 | `professor-alunos.php` | `professor-alunos.js` | Aprovação / recusa de alunos |
@@ -297,9 +297,12 @@ Erros usam `success: false`, `message` e HTTP 4xx/5xx. Em 500, o campo `error` p
 | POST | `/auth/cadastro-aluno` | — | Pedido público (nome, celular, e-mail, senha) |
 | GET | `/professor/painel` | professor | Resumo do painel docente |
 | GET | `/aluno/painel` | aluno | Resumo do painel do aluno |
-| GET | `/turmas` | professor | Lista turmas |
+| GET | `/turmas` | professor | Lista turmas ativas. `?arquivadas=1` lista só as arquivadas |
 | POST | `/turmas` | professor | Cria turma (`codigo`, `titulo`) |
 | POST | `/turmas/update` | professor | Atualiza turma |
+| POST | `/turmas/delete` | professor | Exclui a turma se nenhum `usuarios.turma_id` nem `aulas.turma_id` apontar para ela. Com vínculo: **409** e `can_archive` |
+| POST | `/turmas/arquivar` | professor | Marca `arquivada = 1` sem apagar alunos nem aulas |
+| POST | `/turmas/desarquivar` | professor | Devolve a turma à lista ativa |
 | GET | `/disciplinas` | professor | Lista disciplinas |
 | POST | `/disciplinas` | professor | Cria disciplina (`codigo`, `titulo`) |
 | GET | `/aulas` | autenticado | Lista aulas (`?turma_id=` / `?disciplina_id=`) |

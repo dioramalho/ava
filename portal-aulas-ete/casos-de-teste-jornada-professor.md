@@ -241,6 +241,77 @@ O Composer (`portal-aulas-ete/backend`) só afeta o autoload PHP. Sem `vendor/`,
 
 ---
 
+### JP-03.06 — Excluir turma sem vínculo (P0)
+
+**Pré-condição:** professor autenticado; turma criada nesta sessão, sem aluno (`usuarios.turma_id`) e sem aula (`aulas.turma_id`).
+
+**Passos:**
+
+1. Em **Turmas**, clicar **Excluir** nessa turma.
+2. Confirmar.
+
+**Esperado:**
+
+- A turma some da lista ativa.
+- Não aparece em **Turmas arquivadas**.
+- O registro deixa de existir em `turmas`.
+- O código fica livre para um novo cadastro.
+
+---
+
+### JP-03.07 — Turma com vínculo não exclui; pode ser arquivada (P0)
+
+**Pré-condição:** turma com pelo menos um aluno **ou** uma aula.
+
+**Passos:**
+
+1. **Excluir** e confirmar.
+2. Na mensagem de vínculo, confirmar o arquivamento.
+
+**Esperado:**
+
+- `POST /turmas/delete` responde **409** com `can_archive: true`. Nenhum aluno nem aula é apagado.
+- `POST /turmas/arquivar` marca `arquivada = 1`.
+- A turma some da lista ativa, do select de nova aula e da aprovação de aluno.
+- O código da turma arquivada continua reservado.
+
+---
+
+### JP-03.08 — Turmas arquivadas e desarquivar (P0)
+
+**Pré-condição:** uma turma arquivada (JP-03.07).
+
+**Passos:**
+
+1. Na lista ativa, confirmar que a turma não está visível.
+2. Clicar **Turmas arquivadas**.
+3. **Desarquivar** e confirmar.
+4. Voltar para **Turmas ativas**.
+
+**Esperado:** a turma só aparece depois do clique em **Turmas arquivadas**. Depois de desarquivar, volta à lista ativa e aos selects. Na lista arquivada, **Excluir** continua recusado enquanto houver vínculo.
+
+---
+
+### JP-03.09 — Aluno da turma arquivada continua vendo as aulas (P0)
+
+**Pré-condição:** aluno aprovado na turma; pelo menos uma aula publicada nela; turma arquivada.
+
+**Passos:** entrar como esse aluno e abrir as aulas.
+
+**Esperado:** as aulas da turma continuam visíveis. Arquivar não apaga `usuarios` nem `aulas`.
+
+---
+
+### Evidência em vídeo — JP-03.06 a JP-03.09
+
+Gravação da execução funcional no portal local (professor `professor` / `1234`): excluir turma vazia, recusar exclusão de turma com aula, arquivar, conferir a lista ativa e **Turmas arquivadas**, desarquivar.
+
+Arquivo: [`docs/evidencias/excluir-arquivar-turmas.webm`](docs/evidencias/excluir-arquivar-turmas.webm)
+
+<video src="docs/evidencias/excluir-arquivar-turmas.webm" controls width="720"></video>
+
+---
+
 ## JP-04 — Disciplinas
 
 ### JP-04.01 — Cadastrar disciplina no catálogo (P0)
@@ -541,7 +612,7 @@ Aceitar, no mínimo:
 
 Sem sessão: **401**. Sessão aluno: **403**.
 
-Cobrir no mínimo: criar/editar turma, disciplina, aula, upload, **excluir aula**, **excluir arquivo da aula**, listar pendentes, aprovar, recusar.
+Cobrir no mínimo: criar/editar turma, **excluir turma sem vínculo**, **arquivar turma com vínculo**, **desarquivar**, disciplina, aula, upload, **excluir aula**, **excluir arquivo da aula**, listar pendentes, aprovar, recusar.
 
 ---
 
@@ -630,6 +701,10 @@ Simula o professor no primeiro uso, na ordem de trabalho acordada.
 | JP-03.03 | Turmas | Unicidade | P1 |
 | JP-03.04 | Turmas | Edição | P1 |
 | JP-03.05 | Turmas | Modelo | P1 |
+| JP-03.06 | Turmas | Excluir | P0 |
+| JP-03.07 | Turmas | Arquivar | P0 |
+| JP-03.08 | Turmas | Arquivadas | P0 |
+| JP-03.09 | Turmas | Aluno | P0 |
 | JP-04.01 | Disciplinas | Feliz | P0 |
 | JP-04.02 | Disciplinas | Unicidade | P1 |
 | JP-04.03 | Disciplinas | Validação | P1 |
