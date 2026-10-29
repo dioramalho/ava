@@ -214,6 +214,7 @@ A API reforça `requireProfessor()` / `requireAluno()` nas rotas correspondentes
 - Redirect e validação de sessão dependem de `js/session.js`.
 - `js/professor.js` não é o script das páginas atuais.
 - Composer no backend não altera o front; impacto do autoload: `backend/scripts/composer_impact_check.php`.
+- O envio SMTP (`POST /email/enviar`) não tem tela. Credenciais em `backend/config/mail.local.php` ficam fora do Git; o que o FTP deve preservar está no [README da raiz](../README.md#deploy).
 - Seed do professor ainda usa hash `sha1`; pedidos novos usam bcrypt quando o PHP oferece `password_hash`.
 
 ---

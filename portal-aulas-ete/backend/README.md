@@ -30,11 +30,14 @@ Documentação do front: [`../README.md`](../README.md).
 ```text
 backend/
 ├── app/
-│   ├── controllers/     # Auth, Turma, Disciplina, Aula, Aluno, Professor, AlunoPortal
-│   ├── core/            # App, Request, Response, Database, Controller, BaseModel, Autoloader, LessonUpload, PasswordHelper
+│   ├── controllers/     # Auth, Turma, Disciplina, Aula, Aluno, Professor, AlunoPortal, Email
+│   ├── core/            # App, Request, Response, Database, Controller, BaseModel, Autoloader, LessonUpload, PasswordHelper, Mailer, EmailTemplate
 │   └── models/
 ├── config/
 │   ├── config.php
+│   ├── mail.local.example.php
+│   ├── mail.local.php   # credenciais SMTP; ignorado pelo Git
+│   ├── cacert.pem
 │   └── sqlite_schema.sql
 ├── public/
 │   ├── index.php        # Front controller (Composer ou Autoloader)
@@ -48,7 +51,7 @@ backend/
 └── README.md
 ```
 
-`vendor/` é gerado por `composer install` e não é versionado.
+`vendor/` é gerado por `composer install` e não é versionado. O PHPMailer fica só nessa pasta. `config/mail.local.php` também fica de fora do Git. No FTP, os dois precisam ser preservados no servidor — ver [Deploy](../../README.md#deploy) no README da raiz.
 
 ---
 
@@ -113,6 +116,26 @@ return array(
 | `PORTAL_DB_PASSWORD` | Senha |
 
 > Hoje `config.php` lê `PORTAL_DB_DRIVER`, mas o valor **não é incluído** no array `db` retornado. `Database` então assume `mysql` por padrão. Para SQLite de fato, é necessário passar `driver` e `database` (caminho do `.sqlite`) em `config['db']`.
+
+### E-mail (SMTP)
+
+`config.php` monta a chave `mail` e entrega para `Mailer`. Cada campo usa a variável de ambiente e, se ela estiver vazia, o valor de `config/mail.local.php`.
+
+| Variável | Chave local | Padrão |
+|----------|-------------|--------|
+| `PORTAL_MAIL_HOST` | `host` | `''` (envio recusado) |
+| `PORTAL_MAIL_PORT` | `port` | `587` |
+| `PORTAL_MAIL_USERNAME` | `username` | `''` (sem autenticação SMTP) |
+| `PORTAL_MAIL_PASSWORD` | `password` | `''` |
+| `PORTAL_MAIL_ENCRYPTION` | `encryption` | `tls` (`tls`, `ssl` ou vazio) |
+| `PORTAL_MAIL_FROM` | `from_address` | `''` (envio recusado) |
+| `PORTAL_MAIL_FROM_NAME` | `from_name` | `Portal de Aulas ETE` |
+
+```bash
+cp config/mail.local.example.php config/mail.local.php
+```
+
+`mail.local.php` não entra no Git. O arquivo de exemplo e o `cacert.pem` (verificação TLS) entram. Sem `vendor/` (PHPMailer), `Mailer` lança exceção e a rota responde 500. O `Autoloader.php` não carrega classes do Composer.
 
 ---
 
@@ -318,6 +341,24 @@ Pedidos com `status=pendente`.
 
 **Body:** `{ "id": 1 }`
 
+### E-mail (somente professor)
+
+#### `POST /email/enviar`
+
+**Body** (JSON ou form): `para`, `assunto`, `mensagem`.
+
+| Regra | Limite |
+|-------|--------|
+| `para` | e-mail válido |
+| `assunto` | obrigatório, até 180 caracteres |
+| `mensagem` | obrigatória, até 10.000 caracteres |
+
+O HTML segue `app/views/email/layout.php` (marca ETE). O texto da mensagem é escapado.
+
+**200** `{ "success": true, "message": "E-mail enviado." }`
+
+**422** destino, assunto ou mensagem inválidos · **401/403** sessão ou perfil · **500** SMTP, remetente ou PHPMailer indisponível (a mensagem da API é genérica; o motivo fica no log do PHP)
+
 `MateriaController`, `RecadoController` e `DocumentoController` não estão ligados em `App.php`.
 
 ---
@@ -377,6 +418,7 @@ Pedidos com `status=pendente`.
 5. **Config SQLite** — driver env não chega automaticamente ao `Database` (ver README raiz).
 6. **Pedido público** — `POST /auth/cadastro-aluno` cria aluno `pendente`; o professor aprova e escolhe a turma.
 7. **Controllers legados** — `Materia`, `Recado` e `Documento` não têm rota registrada.
+8. **E-mail** — `POST /email/enviar` exige professor, `mail.local.php` (ou `PORTAL_MAIL_*`) e `vendor/` com PHPMailer. O Git ignora `mail.local.php` e `vendor/`. O FTP automático não apaga esses caminhos no servidor; um envio manual com apagar remoto, sem as mesmas exclusões, remove a senha SMTP e a biblioteca.
 
 ---
 
