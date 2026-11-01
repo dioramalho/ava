@@ -66,7 +66,7 @@
 
     <div class="modal fade" id="alunoModal" tabindex="-1" aria-labelledby="alunoModalTitulo" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
-        <form class="modal-content" id="alunoForm">
+        <form class="modal-content" id="alunoForm" novalidate>
           <div class="modal-header">
             <h2 class="modal-title h5 fw-bold" id="alunoModalTitulo">Editar aluno</h2>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
@@ -79,15 +79,27 @@
             </div>
             <div>
               <label class="form-label fw-semibold" for="alunoEmail">E-mail (login)</label>
-              <input id="alunoEmail" type="email" class="form-control" required />
+              <input id="alunoEmail" type="email" class="form-control" required maxlength="120" autocapitalize="none" spellcheck="false" placeholder="nome.sobrenome@escola.com" />
             </div>
             <div>
               <label class="form-label fw-semibold" for="alunoCelular">Celular</label>
-              <input id="alunoCelular" class="form-control" />
+              <input id="alunoCelular" type="tel" class="form-control" inputmode="numeric" maxlength="20" autocomplete="tel" placeholder="(81)99794-1373" />
             </div>
             <div>
               <label class="form-label fw-semibold" for="alunoTurma">Turma</label>
               <select id="alunoTurma" class="form-select" required></select>
+            </div>
+            <div>
+              <label class="form-label fw-semibold" for="alunoStatus">Status</label>
+              <select id="alunoStatus" class="form-select" required>
+                <option value="aprovado">Aprovado</option>
+                <option value="recusado">Recusado</option>
+                <option value="pendente">Pendente</option>
+              </select>
+            </div>
+            <div class="border rounded p-3">
+              <p class="small text-muted mb-2 mb-md-3">Redefine a senha do aluno para a senha padrão da escola.</p>
+              <button type="button" class="btn btn-outline-warning btn-touch" id="alunoResetSenha">Redefinir senha para @ETE2626</button>
             </div>
           </div>
           <div class="modal-footer">
@@ -101,6 +113,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="js/api.js?v=7"></script>
     <script src="js/session.js?v=6"></script>
-    <script src="js/professor-alunos.js?v=7"></script>
+    <script src="js/aluno-form-masks.js?v=1"></script>
+    <script src="js/professor-alunos.js?v=8"></script>
   </body>
 </html>
