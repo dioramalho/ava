@@ -3,9 +3,17 @@
     return;
   }
 
+  const PAGE_SIZE = 10;
+
   const pendentesWrap = document.getElementById('pendentesWrap');
   const tabela = document.getElementById('alunosTableBody');
   const badgePendentes = document.getElementById('badgePendentes');
+  const filtroTurma = document.getElementById('filtroTurma');
+  const filtroTermo = document.getElementById('filtroTermo');
+  const filtrosForm = document.getElementById('filtrosAlunos');
+  const limparFiltros = document.getElementById('limparFiltros');
+  const alunosResumo = document.getElementById('alunosResumo');
+  const alunosPaginas = document.getElementById('alunosPaginas');
   const modalEl = document.getElementById('alunoModal');
   const form = document.getElementById('alunoForm');
   const botaoSalvar = document.getElementById('alunoSubmit');
@@ -22,8 +30,11 @@
 
   const state = {
     turmas: [],
-    alunos: []
+    alunos: [],
+    pagina: 1
   };
+
+  let buscaTimer = null;
 
   let modal = null;
 
@@ -57,6 +68,50 @@
       });
     }
 
+    if (filtroTurma) {
+      filtroTurma.addEventListener('change', function () {
+        state.pagina = 1;
+        renderLista();
+      });
+    }
+    if (filtroTermo) {
+      filtroTermo.addEventListener('input', function () {
+        clearTimeout(buscaTimer);
+        buscaTimer = setTimeout(function () {
+          state.pagina = 1;
+          renderLista();
+        }, 300);
+      });
+    }
+    if (filtrosForm) {
+      filtrosForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        clearTimeout(buscaTimer);
+        state.pagina = 1;
+        renderLista();
+      });
+    }
+    if (limparFiltros) {
+      limparFiltros.addEventListener('click', function () {
+        clearTimeout(buscaTimer);
+        if (filtrosForm) {
+          filtrosForm.reset();
+        }
+        state.pagina = 1;
+        renderLista();
+      });
+    }
+    if (alunosPaginas) {
+      alunosPaginas.addEventListener('click', function (event) {
+        const botao = event.target.closest ? event.target.closest('.js-pagina') : null;
+        if (!botao || botao.disabled) {
+          return;
+        }
+        state.pagina = parseInt(botao.getAttribute('data-pagina'), 10) || 1;
+        renderLista();
+      });
+    }
+
     try {
       const results = await Promise.all([
         apiRequest('/alunos/pendentes'),
@@ -64,11 +119,13 @@
         apiRequest('/turmas')
       ]);
       state.turmas = results[2].data || [];
+      preencherFiltroTurmas(state.turmas);
       renderPendentes(results[0].data || [], state.turmas);
       renderAprovados(results[1].data || []);
     } catch (error) {
       pendentesWrap.innerHTML = '<p class="text-danger mb-0">' + escapeHtml(error.message) + '</p>';
       tabela.innerHTML = '<tr><td colspan="5" class="text-danger">' + escapeHtml(error.message) + '</td></tr>';
+      limparPaginacao();
     }
   }
 
@@ -131,14 +188,76 @@
     }).join('');
   }
 
+  function preencherFiltroTurmas(turmas) {
+    if (!filtroTurma) {
+      return;
+    }
+    const atual = filtroTurma.value;
+    filtroTurma.innerHTML = '<option value="">Todas as turmas</option>' + turmas.map(function (turma) {
+      return '<option value="' + turma.id + '">' + escapeHtml(turma.codigo) + ' — ' + escapeHtml(turma.titulo) + '</option>';
+    }).join('');
+    if (atual) {
+      filtroTurma.value = atual;
+    }
+  }
+
   function renderAprovados(alunos) {
-    state.alunos = alunos;
-    if (!alunos.length) {
-      tabela.innerHTML = '<tr><td colspan="5" class="text-muted">Nenhum aluno aprovado ainda.</td></tr>';
+    state.alunos = alunos || [];
+    renderLista();
+  }
+
+  function filtrosAtivos() {
+    return !!((filtroTurma && filtroTurma.value) || (filtroTermo && filtroTermo.value.trim()));
+  }
+
+  function normalizarBusca(value) {
+    var texto = String(value || '').toLowerCase();
+    if (texto.normalize) {
+      texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+    return texto;
+  }
+
+  function alunosFiltrados() {
+    const turmaId = filtroTurma ? filtroTurma.value : '';
+    const termo = normalizarBusca(filtroTermo ? filtroTermo.value.trim() : '');
+
+    return state.alunos.filter(function (aluno) {
+      if (turmaId && String(aluno.turma_id) !== String(turmaId)) {
+        return false;
+      }
+      if (!termo) {
+        return true;
+      }
+      const alvo = normalizarBusca([aluno.nome, aluno.email, aluno.login, aluno.celular].join(' '));
+      return alvo.indexOf(termo) !== -1;
+    });
+  }
+
+  function renderLista() {
+    const filtrados = alunosFiltrados();
+    const total = filtrados.length;
+    const paginas = Math.max(1, Math.ceil(total / PAGE_SIZE));
+    if (state.pagina > paginas) {
+      state.pagina = paginas;
+    }
+    if (state.pagina < 1) {
+      state.pagina = 1;
+    }
+
+    if (!total) {
+      const mensagem = filtrosAtivos()
+        ? 'Nenhum aluno encontrado com os filtros informados.'
+        : 'Nenhum aluno aprovado ainda.';
+      tabela.innerHTML = '<tr><td colspan="5" class="text-muted">' + mensagem + '</td></tr>';
+      limparPaginacao();
       return;
     }
 
-    tabela.innerHTML = alunos.map(function (aluno) {
+    const inicio = (state.pagina - 1) * PAGE_SIZE;
+    const paginaAtual = filtrados.slice(inicio, inicio + PAGE_SIZE);
+
+    tabela.innerHTML = paginaAtual.map(function (aluno) {
       const contato = escapeHtml(aluno.email) + (aluno.celular ? '<br><span class="small text-muted">' + escapeHtml(aluno.celular) + '</span>' : '');
       return '<tr><td>' + escapeHtml(aluno.nome) + '</td><td>' + contato + '</td>' +
         '<td>' + escapeHtml(aluno.turma_codigo) + '</td>' +
@@ -148,6 +267,67 @@
         '<button type="button" class="btn btn-sm btn-outline-danger js-excluir-aluno" data-id="' + aluno.id + '">Excluir</button>' +
         '</td></tr>';
     }).join('');
+
+    renderPaginacao(total, state.pagina, paginas);
+  }
+
+  function limparPaginacao() {
+    if (alunosResumo) {
+      alunosResumo.textContent = '';
+    }
+    if (alunosPaginas) {
+      alunosPaginas.innerHTML = '';
+    }
+  }
+
+  function renderPaginacao(total, pagina, paginas) {
+    if (!alunosResumo || !alunosPaginas) {
+      return;
+    }
+
+    const inicio = (pagina - 1) * PAGE_SIZE + 1;
+    const fim = Math.min(pagina * PAGE_SIZE, total);
+    alunosResumo.textContent = 'Mostrando ' + inicio + '–' + fim + ' de ' + total;
+
+    if (paginas <= 1) {
+      alunosPaginas.innerHTML = '';
+      return;
+    }
+
+    let html = paginaItem('Anterior', pagina - 1, pagina === 1, false);
+    let start = 1;
+    let end = paginas;
+    if (paginas > 7) {
+      start = Math.max(1, pagina - 2);
+      end = Math.min(paginas, start + 4);
+      start = Math.max(1, end - 4);
+    }
+    if (start > 1) {
+      html += paginaItem('1', 1, false, pagina === 1);
+      if (start > 2) {
+        html += '<li class="page-item disabled"><span class="page-link">…</span></li>';
+      }
+    }
+    for (let i = start; i <= end; i++) {
+      html += paginaItem(String(i), i, false, i === pagina);
+    }
+    if (end < paginas) {
+      if (end < paginas - 1) {
+        html += '<li class="page-item disabled"><span class="page-link">…</span></li>';
+      }
+      html += paginaItem(String(paginas), paginas, false, pagina === paginas);
+    }
+    html += paginaItem('Próxima', pagina + 1, pagina === paginas, false);
+    alunosPaginas.innerHTML = html;
+  }
+
+  function paginaItem(label, pagina, disabled, active) {
+    if (disabled || active) {
+      return '<li class="page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '') + '">' +
+        '<span class="page-link"' + (active ? ' aria-current="page"' : '') + '>' + escapeHtml(label) + '</span></li>';
+    }
+    return '<li class="page-item"><button type="button" class="page-link js-pagina" data-pagina="' + pagina + '">' +
+      escapeHtml(label) + '</button></li>';
   }
 
   async function reloadAprovados() {

@@ -44,6 +44,25 @@
       <section>
         <article class="ete-card p-4">
           <h2 class="h5 fw-bold mb-3">Alunos com acesso</h2>
+          <form class="row g-2 mb-3" id="filtrosAlunos" role="search">
+            <div class="col-md-4 col-lg-3">
+              <label class="form-label small mb-1" for="filtroTurma">Turma</label>
+              <select class="form-select" id="filtroTurma" aria-label="Filtrar por turma">
+                <option value="">Todas as turmas</option>
+              </select>
+            </div>
+            <div class="col-md-5 col-lg-6">
+              <label class="form-label small mb-1" for="filtroTermo">Aluno</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
+                <input type="search" class="form-control" id="filtroTermo" placeholder="Buscar por nome, e-mail ou login" aria-label="Buscar alunos" />
+              </div>
+            </div>
+            <div class="col-md-3 col-lg-3 d-grid">
+              <label class="form-label small mb-1 d-none d-md-block" aria-hidden="true">&nbsp;</label>
+              <button type="button" class="btn btn-outline-secondary btn-touch" id="limparFiltros">Limpar filtros</button>
+            </div>
+          </form>
           <div class="table-responsive">
             <table class="table ete-table align-middle mb-0">
               <thead>
@@ -59,6 +78,12 @@
                 <tr><td colspan="5" class="text-muted">Carregando...</td></tr>
               </tbody>
             </table>
+          </div>
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mt-3" id="alunosPaginacao">
+            <p class="small text-muted mb-0" id="alunosResumo"></p>
+            <nav aria-label="Paginação de alunos">
+              <ul class="pagination pagination-sm mb-0" id="alunosPaginas"></ul>
+            </nav>
           </div>
         </article>
       </section>
@@ -114,6 +139,6 @@
     <script src="js/api.js?v=7"></script>
     <script src="js/session.js?v=6"></script>
     <script src="js/aluno-form-masks.js?v=1"></script>
-    <script src="js/professor-alunos.js?v=8"></script>
+    <script src="js/professor-alunos.js?v=9"></script>
   </body>
 </html>

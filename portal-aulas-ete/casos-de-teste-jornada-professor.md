@@ -644,6 +644,35 @@ Aceitar, no mínimo:
 
 ---
 
+### JP-07.12 — Filtrar turma, buscar aluno e paginar (P1)
+
+**Pré-condição:** professor autenticado em **Alunos**; mais de uma turma com alunos. A lista vem inteira de `GET /alunos` e a paginação é no navegador, 10 por página.
+
+**Passos:**
+
+1. Filtrar pela turma TDS-2024.
+2. Limpar e buscar `Rafael`.
+3. Com mais de 10 alunos com acesso, abrir a página 2. Se a base tiver 10 ou menos, criar alunos aprovados só para o teste e excluí-los ao fim.
+4. Conferir **Editar** e **Excluir** na linha.
+
+**Esperado:**
+
+- A turma mostra só alunos daquela turma. A busca acha o aluno pelo nome (também vale e-mail ou login).
+- Trocar o filtro volta para a página 1. Sem resultado: “Nenhum aluno encontrado com os filtros informados.”
+- Com mais de 10, a página 2 mostra o restante e o resumo “Mostrando … de …”. **Editar** e **Excluir** continuam na linha.
+
+---
+
+### Evidência em vídeo — JP-07.12
+
+Gravação da execução funcional no portal local (professor `professor` / `1234`): filtrar TDS-2024 (2 alunos), buscar Rafael Moura, paginar 10 em 10 até a página 2 (11 alunos, com 6 contas temporárias) e voltar à lista original de 5 depois de excluir essas contas.
+
+Arquivo: [`docs/evidencias/filtrar-paginar-alunos.webm`](docs/evidencias/filtrar-paginar-alunos.webm)
+
+<video src="docs/evidencias/filtrar-paginar-alunos.webm" controls width="720"></video>
+
+---
+
 ### Evidência — JP-07.08 a JP-07.11 (01/11/2026)
 
 Comando: `php scripts/aluno_edicao_check.php` (a partir de `portal-aulas-ete/backend`), PHP 5.6.40, API `http://localhost/ava/portal-aulas-ete/backend/public/index.php`.
@@ -802,6 +831,7 @@ Simula o professor no primeiro uso, na ordem de trabalho acordada.
 | JP-07.09 | Alunos | Status | P0 |
 | JP-07.10 | Alunos | Celular | P1 |
 | JP-07.11 | Alunos | E-mail | P1 |
+| JP-07.12 | Alunos | Filtro e página | P1 |
 | JP-08.01 | API | 401/403 | P0 |
 | JP-08.02 | API | Injeção | P1 |
 | JP-08.03 | API | Upload | P1 |
