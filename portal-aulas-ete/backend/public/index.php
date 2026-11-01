@@ -15,9 +15,9 @@ $composerAutoload = dirname(__DIR__) . '/vendor/autoload.php';
 
 if (file_exists($composerAutoload)) {
     require_once $composerAutoload;
-} else {
-    require_once dirname(__DIR__) . '/app/core/Autoloader.php';
 }
+
+require_once dirname(__DIR__) . '/app/core/Autoloader.php';
 
 try {
     $request = new Request();

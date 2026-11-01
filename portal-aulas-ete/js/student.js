@@ -34,6 +34,8 @@
         return;
       }
 
+      initTrocaSenha();
+
       const response = await apiRequest('/aluno/painel');
       const data = response.data || {};
       const aluno = data.aluno || session;
@@ -51,11 +53,90 @@
 
       renderDisciplinas(disciplinasWrap, data.disciplinas || []);
       renderRecentes(recentesWrap, data.aulas_recentes || []);
+      renderTrabalhosPendentes(data.trabalhos_pendentes || []);
     } catch (error) {
       if (disciplinasWrap) {
         disciplinasWrap.innerHTML = '<div class="col-12"><div class="alert alert-danger mb-0">' + escapeHtml(error.message) + '</div></div>';
       }
     }
+  }
+
+  function mensagemNovaSenha(senha, confirmacao) {
+    if (!senha || !confirmacao) {
+      return 'Informe a nova senha e a confirmação.';
+    }
+    if (senha.length < 6) {
+      return 'A senha deve ter pelo menos 6 caracteres.';
+    }
+    if (senha !== confirmacao) {
+      return 'A confirmação de senha não confere.';
+    }
+    if (senha === '@ETE2626') {
+      return 'Escolha uma senha diferente da senha provisória.';
+    }
+    return '';
+  }
+
+  function initTrocaSenha() {
+    const form = document.getElementById('formSenha');
+    const alertBox = document.getElementById('senhaAlert');
+    if (!form || form.getAttribute('data-bound') === '1') {
+      return;
+    }
+    form.setAttribute('data-bound', '1');
+
+    form.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      if (alertBox) {
+        alertBox.className = 'alert d-none';
+        alertBox.textContent = '';
+      }
+
+      const senhaAtual = document.getElementById('senhaAtual').value.trim();
+      const senha = document.getElementById('senhaNova').value.trim();
+      const confirmacao = document.getElementById('senhaConfirmacao').value.trim();
+      const erro = !senhaAtual ? 'Informe a senha atual.' : mensagemNovaSenha(senha, confirmacao);
+      if (erro) {
+        if (alertBox) {
+          alertBox.className = 'alert alert-danger';
+          alertBox.textContent = erro;
+        }
+        return;
+      }
+
+      const button = form.querySelector('button[type="submit"]');
+      if (button) {
+        button.disabled = true;
+      }
+
+      try {
+        const response = await apiRequest('/auth/trocar-senha', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            senha_atual: senhaAtual,
+            senha: senha,
+            confirmacao_senha: confirmacao
+          })
+        });
+        form.reset();
+        if (alertBox) {
+          alertBox.className = 'alert alert-success';
+          alertBox.textContent = response.message || 'Senha alterada com sucesso.';
+        }
+      } catch (error) {
+        if (alertBox) {
+          alertBox.className = 'alert alert-danger';
+          alertBox.textContent = error.message || 'Não foi possível alterar a senha.';
+        }
+      } finally {
+        if (button) {
+          button.disabled = false;
+        }
+      }
+    });
   }
 
   function renderDisciplinas(wrap, disciplinas) {
@@ -78,6 +159,34 @@
         '<span class="small text-muted">' + escapeHtml(label) + '</span>' +
         '</article></a></div>';
     }).join('');
+  }
+
+  function formatarData(valor) {
+    const texto = String(valor || '').slice(0, 10);
+    const partes = texto.split('-');
+    if (partes.length !== 3 || partes[0].length !== 4) {
+      return texto;
+    }
+    return partes[2] + '/' + partes[1] + '/' + partes[0];
+  }
+
+  function renderTrabalhosPendentes(trabalhos) {
+    const wrap = document.getElementById('trabalhosAlerta');
+    if (!wrap) {
+      return;
+    }
+    if (!trabalhos.length) {
+      wrap.innerHTML = '<article class="ete-card p-4"><p class="text-muted mb-0">Nenhum trabalho pendente.</p></article>';
+      return;
+    }
+
+    wrap.innerHTML = '<div class="alert alert-warning mb-3">Você tem ' + trabalhos.length + (trabalhos.length === 1 ? ' trabalho pendente.' : ' trabalhos pendentes.') + '</div>' +
+      '<ul class="list-group">' + trabalhos.map(function (item) {
+        return '<li class="list-group-item d-flex justify-content-between align-items-center gap-3">' +
+          '<div><strong>' + escapeHtml(item.titulo) + '</strong>' +
+          '<p class="small text-muted mb-0">' + escapeHtml(item.aula_titulo || '') + ' · entrega ' + escapeHtml(formatarData(item.data_entrega_vigente)) + '</p></div>' +
+          '<a class="btn btn-sm btn-ete-primary" href="aluno-trabalho.html?id=' + encodeURIComponent(item.id) + '">Abrir</a></li>';
+      }).join('') + '</ul>';
   }
 
   function renderRecentes(wrap, aulas) {

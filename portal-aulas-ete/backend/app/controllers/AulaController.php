@@ -5,6 +5,7 @@ class AulaController extends Controller
     public function index(Request $request)
     {
         $this->requireAuth();
+        $this->denyAlunoSenhaPadrao();
 
         $user = $_SESSION['user'];
         $model = new Aula();
@@ -33,6 +34,7 @@ class AulaController extends Controller
     public function show(Request $request)
     {
         $this->requireAuth();
+        $this->denyAlunoSenhaPadrao();
 
         $id = (int) $request->query('id', 0);
         if ($id <= 0) {

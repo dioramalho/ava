@@ -122,6 +122,65 @@ class AuthController extends Controller
         ), 201);
     }
 
+    public function trocarSenha(Request $request)
+    {
+        $this->requireAuth();
+
+        $perfil = isset($_SESSION['user']['perfil']) ? $_SESSION['user']['perfil'] : '';
+        if ($perfil !== 'aluno') {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Acesso permitido apenas para aluno.'
+            ), 403);
+        }
+
+        $senha = $request->input('senha', '');
+        $confirmacao = $request->input('confirmacao_senha', '');
+        $erro = PasswordHelper::novaSenhaErro($senha, $confirmacao);
+        if ($erro !== '') {
+            $this->json(array(
+                'success' => false,
+                'message' => $erro
+            ), 422);
+        }
+
+        $userModel = new User();
+        $id = (int) $_SESSION['user']['id'];
+        $hashAtual = $userModel->passwordHash($id);
+        $trocaObrigatoria = PasswordHelper::storedIsResetPassword($hashAtual);
+
+        if (!$trocaObrigatoria) {
+            $senhaAtual = $request->input('senha_atual', '');
+            if ($senhaAtual === '' || !PasswordHelper::verify($senhaAtual, $hashAtual)) {
+                $this->json(array(
+                    'success' => false,
+                    'message' => $senhaAtual === '' ? 'Informe a senha atual.' : 'A senha atual não confere.'
+                ), 422);
+            }
+        }
+
+        if (!$userModel->updatePassword($id, PasswordHelper::hash($senha))) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Não foi possível alterar a senha.'
+            ), 500);
+        }
+
+        $fresh = $userModel->findByIdWithTurma($id);
+        $sessionUser = $userModel->toSessionUser($fresh);
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+        $_SESSION['user'] = $sessionUser;
+        session_write_close();
+
+        $this->json(array(
+            'success' => true,
+            'message' => 'Senha alterada com sucesso.',
+            'data' => $sessionUser
+        ), 200);
+    }
+
     public function logout()
     {
         $_SESSION = array();

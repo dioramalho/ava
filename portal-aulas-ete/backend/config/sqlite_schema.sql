@@ -1,5 +1,8 @@
 PRAGMA foreign_keys = OFF;
 
+DROP TABLE IF EXISTS trabalho_eventos;
+DROP TABLE IF EXISTS trabalho_alunos;
+DROP TABLE IF EXISTS trabalhos;
 DROP TABLE IF EXISTS aula_arquivos;
 DROP TABLE IF EXISTS aula_videos;
 DROP TABLE IF EXISTS aulas;
@@ -68,6 +71,51 @@ CREATE TABLE aula_arquivos (
   extensao TEXT NOT NULL,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (aula_id) REFERENCES aulas (id) ON DELETE CASCADE
+);
+
+CREATE TABLE trabalhos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  titulo TEXT NOT NULL,
+  descricao TEXT NOT NULL,
+  data_entrega TEXT NOT NULL,
+  turma_id INTEGER NOT NULL,
+  aula_id INTEGER NOT NULL,
+  arquivo_nome TEXT DEFAULT NULL,
+  arquivo_caminho TEXT DEFAULT NULL,
+  arquivo_extensao TEXT DEFAULT NULL,
+  video_url TEXT DEFAULT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (turma_id) REFERENCES turmas (id),
+  FOREIGN KEY (aula_id) REFERENCES aulas (id)
+);
+
+CREATE TABLE trabalho_alunos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  trabalho_id INTEGER NOT NULL,
+  aluno_id INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pendente',
+  data_entrega_vigente TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (trabalho_id, aluno_id),
+  FOREIGN KEY (trabalho_id) REFERENCES trabalhos (id) ON DELETE CASCADE,
+  FOREIGN KEY (aluno_id) REFERENCES usuarios (id)
+);
+
+CREATE TABLE trabalho_eventos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  trabalho_aluno_id INTEGER NOT NULL,
+  tipo TEXT NOT NULL,
+  autor_id INTEGER DEFAULT NULL,
+  autor_perfil TEXT NOT NULL,
+  texto TEXT DEFAULT NULL,
+  arquivo_nome TEXT DEFAULT NULL,
+  arquivo_caminho TEXT DEFAULT NULL,
+  arquivo_extensao TEXT DEFAULT NULL,
+  data_entrega TEXT DEFAULT NULL,
+  status TEXT DEFAULT NULL,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (trabalho_aluno_id) REFERENCES trabalho_alunos (id) ON DELETE CASCADE
 );
 
 INSERT INTO turmas (id, codigo, titulo) VALUES

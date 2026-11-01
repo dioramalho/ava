@@ -60,5 +60,21 @@ class Controller
                 'message' => 'Acesso permitido apenas para aluno.'
             ), 403);
         }
+
+        $this->denyAlunoSenhaPadrao();
+    }
+
+    protected function denyAlunoSenhaPadrao()
+    {
+        $perfil = isset($_SESSION['user']['perfil']) ? $_SESSION['user']['perfil'] : '';
+        $precisaTrocar = !empty($_SESSION['user']['precisa_trocar_senha']);
+
+        if ($perfil === 'aluno' && $precisaTrocar) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Defina uma nova senha para continuar.',
+                'code' => 'senha_padrao'
+            ), 403);
+        }
     }
 }
