@@ -606,13 +606,74 @@ Aceitar, no mínimo:
 
 ---
 
+### JP-07.08 — Redefinir senha do aluno para @ETE2626 (P0)
+
+**Pré-condição:** professor autenticado; aluno na lista de **Alunos** (modal **Editar aluno**).
+
+**Passos:** **Editar** → **Redefinir senha para @ETE2626** → confirmar.
+
+**Esperado:**
+
+- `POST /alunos/reset-senha` com a sessão do professor grava o hash (bcrypt ou sha1, o mesmo de `PasswordHelper`), nunca o texto puro.
+- O aluno entra com login (e-mail) e senha `@ETE2626`.
+- Sem sessão: **401**. Sessão de aluno: **403**.
+
+---
+
+### JP-07.09 — Status editável no formulário (P0)
+
+**Passos:** no mesmo modal, alterar **Status** para Recusado e salvar. Reabrir (o aluno com turma continua na lista) e voltar para Aprovado.
+
+**Esperado:** `usuarios.status` persiste (`aprovado`, `recusado` ou `pendente`). Recusado não autentica. Aprovado volta a autenticar.
+
+---
+
+### JP-07.10 — Máscara de celular (P1)
+
+**Passos:** no campo **Celular**, digitar `81997941373`.
+
+**Esperado:** o campo mostra `(81)99794-1373` enquanto digita. Ao salvar, o banco guarda esse texto (11 dígitos). Valor antigo com outra quantidade de dígitos não é reescrito até o professor completar 11 dígitos ou apagar o campo.
+
+---
+
+### JP-07.11 — Máscara de e-mail (P1)
+
+**Passos:** digitar ` Nome.Sobrenome@Escola.com ` (maiúsculas e espaços).
+
+**Esperado:** o campo fica `nome.sobrenome@escola.com` (minúsculas, sem espaço, um `@`). E-mail sem formato válido não salva (aviso na tela; API **422**).
+
+---
+
+### Evidência — JP-07.08 a JP-07.11 (01/11/2026)
+
+Comando: `php scripts/aluno_edicao_check.php` (a partir de `portal-aulas-ete/backend`), PHP 5.6.40, API `http://localhost/ava/portal-aulas-ete/backend/public/index.php`.
+
+| Caso | Passos executados | Esperado | Resultado |
+|---|---|---|---|
+| Senha `@ETE2626` | Reset pela API do professor; leitura do hash; login do aluno | Hash (não texto puro) e login com `@ETE2626` | **Passou.** Prefixo `$2y$` (bcrypt). `PasswordHelper::verify` ok. Login **200**. Senha anterior **401**. Sem sessão **401**. Sessão de aluno **403**. |
+| Status | Update `recusado`, login, update `aprovado` | Persiste e bloqueia/libera o acesso | **Passou.** Lista devolveu `recusado`; login **403**; volta a `aprovado` com **200**. |
+| Celular | `81997941373` no update; máscara JS no Node | `(81)99794-1373` | **Passou.** API gravou `(81)99794-1373`. Node: máscara JS ok. Incompleto **422**. |
+| E-mail | ` Nome.Sobrenome.{id}@Escola.TEST ` | minúsculas, sem espaço; inválido **422** | **Passou.** Gravado `nome.sobrenome.{id}@escola.test`. `sem-arroba` **422**. |
+
+Saída do script: `RESULTADO: edicao do aluno ok.` O aluno criado pelo script foi excluído no fim.
+
+Navegador (professor `professor` / `1234`, aluno descartável depois excluído), tela `professor-alunos.php`, modal **Editar aluno**:
+
+- Digitar `81997941373` no celular produziu, passo a passo, `(81)99794-1373`.
+- Digitar ` Nome.Sobrenome@Escola.COM ` produziu `nome.sobrenome@escola.com`.
+- Status **Recusado**, salvar, recarregar a página e reabrir: e-mail, celular `(81)99794-1373` e status `recusado` continuavam gravados.
+- Botão **Redefinir senha para @ETE2626** (confirmação aceita). Hash no banco `$2y$…`, confere com `@ETE2626`.
+- Status de volta para **Aprovado**. Login na tela inicial com o e-mail do aluno e senha `@ETE2626` abriu `dashboard.html`.
+
+---
+
 ## JP-08 — Segurança e API (professor)
 
 ### JP-08.01 — Rotas docentes exigem professor (P0)
 
 Sem sessão: **401**. Sessão aluno: **403**.
 
-Cobrir no mínimo: criar/editar turma, **excluir turma sem vínculo**, **arquivar turma com vínculo**, **desarquivar**, disciplina, aula, upload, **excluir aula**, **excluir arquivo da aula**, listar pendentes, aprovar, recusar.
+Cobrir no mínimo: criar/editar turma, **excluir turma sem vínculo**, **arquivar turma com vínculo**, **desarquivar**, disciplina, aula, upload, **excluir aula**, **excluir arquivo da aula**, listar pendentes, aprovar, recusar, **redefinir senha do aluno**.
 
 ---
 
@@ -737,6 +798,10 @@ Simula o professor no primeiro uso, na ordem de trabalho acordada.
 | JP-07.05 | Alunos | Idempotência | P1 |
 | JP-07.06 | Alunos | Sem turma | P1 |
 | JP-07.07 | Alunos | Visibilidade | P0 |
+| JP-07.08 | Alunos | Senha padrão | P0 |
+| JP-07.09 | Alunos | Status | P0 |
+| JP-07.10 | Alunos | Celular | P1 |
+| JP-07.11 | Alunos | E-mail | P1 |
 | JP-08.01 | API | 401/403 | P0 |
 | JP-08.02 | API | Injeção | P1 |
 | JP-08.03 | API | Upload | P1 |

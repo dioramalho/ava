@@ -77,6 +77,7 @@ class App
         $this->post('/alunos/aprovar', 'AlunoController', 'aprovar');
         $this->post('/alunos/recusar', 'AlunoController', 'recusar');
         $this->post('/alunos/update', 'AlunoController', 'update');
+        $this->post('/alunos/reset-senha', 'AlunoController', 'resetSenha');
         $this->post('/alunos/delete', 'AlunoController', 'destroy');
 
         $this->post('/email/enviar', 'EmailController', 'enviar');

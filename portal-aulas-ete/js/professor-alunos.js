@@ -14,8 +14,11 @@
     nome: document.getElementById('alunoNome'),
     email: document.getElementById('alunoEmail'),
     celular: document.getElementById('alunoCelular'),
-    turma: document.getElementById('alunoTurma')
+    turma: document.getElementById('alunoTurma'),
+    status: document.getElementById('alunoStatus')
   };
+  const botaoResetSenha = document.getElementById('alunoResetSenha');
+  const masks = window.PortalAlunoMasks || null;
 
   const state = {
     turmas: [],
@@ -37,6 +40,22 @@
     }
     form.addEventListener('submit', onSubmitEdicao);
     tabela.addEventListener('click', onTableClick);
+    if (botaoResetSenha) {
+      botaoResetSenha.addEventListener('click', onResetSenha);
+    }
+    if (masks && campos.celular) {
+      campos.celular.addEventListener('input', function () {
+        campos.celular.value = masks.maskCelular(campos.celular.value);
+      });
+    }
+    if (masks && campos.email) {
+      campos.email.addEventListener('input', function () {
+        var next = masks.maskEmail(campos.email.value);
+        if (campos.email.value !== next) {
+          campos.email.value = next;
+        }
+      });
+    }
 
     try {
       const results = await Promise.all([
@@ -123,7 +142,7 @@
       const contato = escapeHtml(aluno.email) + (aluno.celular ? '<br><span class="small text-muted">' + escapeHtml(aluno.celular) + '</span>' : '');
       return '<tr><td>' + escapeHtml(aluno.nome) + '</td><td>' + contato + '</td>' +
         '<td>' + escapeHtml(aluno.turma_codigo) + '</td>' +
-        '<td><span class="badge ete-badge-ok">Aprovado</span></td>' +
+        '<td>' + statusBadge(aluno.status) + '</td>' +
         '<td class="text-end text-nowrap">' +
         '<button type="button" class="btn btn-sm btn-outline-secondary me-1 js-editar-aluno" data-id="' + aluno.id + '">Editar</button>' +
         '<button type="button" class="btn btn-sm btn-outline-danger js-excluir-aluno" data-id="' + aluno.id + '">Excluir</button>' +
@@ -134,6 +153,16 @@
   async function reloadAprovados() {
     const response = await apiRequest('/alunos');
     renderAprovados(response.data || []);
+  }
+
+  function statusBadge(status) {
+    if (status === 'recusado') {
+      return '<span class="badge text-bg-danger">Recusado</span>';
+    }
+    if (status === 'pendente') {
+      return '<span class="badge ete-badge-pending">Pendente</span>';
+    }
+    return '<span class="badge ete-badge-ok">Aprovado</span>';
   }
 
   function findAluno(id) {
@@ -164,10 +193,13 @@
 
     campos.id.value = aluno.id;
     campos.nome.value = aluno.nome || '';
-    campos.email.value = aluno.email || '';
-    campos.celular.value = aluno.celular || '';
+    campos.email.value = masks ? masks.maskEmail(aluno.email || '') : (aluno.email || '');
+    campos.celular.value = masks ? masks.maskCelular(aluno.celular || '') : (aluno.celular || '');
     campos.turma.innerHTML = turmaOptions(state.turmas);
     campos.turma.value = String(aluno.turma_id);
+    if (campos.status) {
+      campos.status.value = aluno.status || 'aprovado';
+    }
 
     if (modal) {
       modal.show();
@@ -176,16 +208,33 @@
 
   async function onSubmitEdicao(event) {
     event.preventDefault();
+    if (masks) {
+      campos.email.value = masks.maskEmail(campos.email.value);
+      campos.celular.value = masks.maskCelular(campos.celular.value);
+    }
+
     const payload = {
       id: campos.id.value,
       nome: campos.nome.value.trim(),
       email: campos.email.value.trim(),
       celular: campos.celular.value.trim(),
-      turma_id: campos.turma.value
+      turma_id: campos.turma.value,
+      status: campos.status ? campos.status.value : 'aprovado'
     };
 
     if (!payload.nome || !payload.email || !payload.turma_id) {
       window.showPortalFeedback('Preencha nome, e-mail e turma.', 'warning');
+      return;
+    }
+
+    if (masks && !masks.emailValido(payload.email)) {
+      window.showPortalFeedback('Informe um e-mail válido, sem espaços. Ex.: nome.sobrenome@escola.com', 'warning');
+      return;
+    }
+
+    var digitosCelular = payload.celular.replace(/\D/g, '');
+    if (digitosCelular && digitosCelular.length !== 11) {
+      window.showPortalFeedback('Informe o celular no formato (81)99794-1373 ou deixe em branco.', 'warning');
       return;
     }
 
@@ -199,12 +248,46 @@
       if (modal) {
         modal.hide();
       }
-      await reloadAprovados();
+      await reloadListas();
       window.showPortalFeedback(response.message || 'Aluno atualizado.', 'success');
     } catch (error) {
       window.showPortalFeedback(error.message, 'danger');
     } finally {
       botaoSalvar.disabled = false;
+    }
+  }
+
+  async function reloadListas() {
+    const results = await Promise.all([
+      apiRequest('/alunos/pendentes'),
+      apiRequest('/alunos')
+    ]);
+    renderPendentes(results[0].data || [], state.turmas);
+    renderAprovados(results[1].data || []);
+  }
+
+  async function onResetSenha() {
+    const id = campos.id.value;
+    if (!id) {
+      return;
+    }
+
+    if (!window.confirm('Redefinir a senha deste aluno para @ETE2626?')) {
+      return;
+    }
+
+    botaoResetSenha.disabled = true;
+    try {
+      const response = await apiRequest('/alunos/reset-senha', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id })
+      });
+      window.showPortalFeedback(response.message || 'Senha redefinida. O aluno entra com @ETE2626.', 'success');
+    } catch (error) {
+      window.showPortalFeedback(error.message, 'danger');
+    } finally {
+      botaoResetSenha.disabled = false;
     }
   }
 

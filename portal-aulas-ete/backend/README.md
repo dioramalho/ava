@@ -349,7 +349,7 @@ O aluno é um `usuarios`, não a tabela antiga `alunos`.
 
 #### `GET /alunos`
 
-Lista alunos **aprovados**.
+Lista alunos com turma e `status` `aprovado` ou `recusado` (o recusado continua na lista para o professor reativar o acesso).
 
 #### `GET /alunos/pendentes`
 
@@ -362,6 +362,18 @@ Pedidos com `status=pendente`.
 #### `POST /alunos/recusar`
 
 **Body:** `{ "id": 1 }`
+
+#### `POST /alunos/update` — professor
+
+**Body:** `id`, `nome`, `email`, `turma_id`, `celular` (opcional), `status` (`aprovado`, `recusado` ou `pendente`; se omitido, mantém o atual).
+
+O e-mail é gravado em minúsculas, sem espaços. O celular com 11 dígitos é gravado como `(DD)NNNNN-NNNN` (ex.: `(81)99794-1373`). Número já salvo com outra quantidade de dígitos só é regravado se o professor informar 11 dígitos ou limpar o campo.
+
+#### `POST /alunos/reset-senha` — professor
+
+**Body:** `{ "id": 1 }`
+
+Grava a senha padrão `@ETE2626` com o mesmo `PasswordHelper` das demais senhas (bcrypt, ou sha1 se `password_hash` não existir). Não altera a senha de professor. Sem sessão: **401**. Outro perfil: **403**.
 
 ### E-mail (somente professor)
 
@@ -455,6 +467,14 @@ php scripts/composer_impact_check.php
 ```
 
 Saída esperada: `RESULTADO: nenhum impacto funcional detectado.`
+
+Edição do aluno (senha padrão `@ETE2626`, status, celular e e-mail):
+
+```bash
+php scripts/aluno_edicao_check.php
+```
+
+Saída esperada: `RESULTADO: edicao do aluno ok.` O caso manual correspondente está em `casos-de-teste-jornada-professor.md` (JP-07.08 a JP-07.11).
 
 ---
 

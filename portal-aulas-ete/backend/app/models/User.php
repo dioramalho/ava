@@ -101,12 +101,11 @@ class User extends BaseModel
                        turmas.id AS turma_id, turmas.codigo AS turma_codigo, turmas.titulo AS turma_titulo
                 FROM usuarios
                 INNER JOIN turmas ON turmas.id = usuarios.turma_id
-                WHERE usuarios.perfil = :perfil AND usuarios.status = :status
+                WHERE usuarios.perfil = :perfil AND usuarios.status IN (\'aprovado\', \'recusado\')
                 ORDER BY usuarios.nome ASC';
         $statement = $this->connection->prepare($sql);
         $statement->execute(array(
-            ':perfil' => 'aluno',
-            ':status' => 'aprovado'
+            ':perfil' => 'aluno'
         ));
 
         return $statement->fetchAll();
@@ -165,7 +164,7 @@ class User extends BaseModel
     {
         $statement = $this->connection->prepare(
             'UPDATE usuarios
-             SET nome = :nome, login = :login, email = :email, celular = :celular, turma_id = :turma_id
+             SET nome = :nome, login = :login, email = :email, celular = :celular, turma_id = :turma_id, status = :status
              WHERE id = :id AND perfil = :perfil'
         );
 
@@ -175,9 +174,38 @@ class User extends BaseModel
             ':email' => $data['email'],
             ':celular' => $data['celular'],
             ':turma_id' => (int) $data['turma_id'],
+            ':status' => $data['status'],
             ':id' => (int) $id,
             ':perfil' => 'aluno'
         ));
+    }
+
+    public function resetSenhaAluno($id, $senhaHash)
+    {
+        $statement = $this->connection->prepare(
+            'UPDATE usuarios SET senha = :senha WHERE id = :id AND perfil = :perfil'
+        );
+        $statement->execute(array(
+            ':senha' => $senhaHash,
+            ':id' => (int) $id,
+            ':perfil' => 'aluno'
+        ));
+
+        return $statement->rowCount() > 0;
+    }
+
+    public function findSenhaHash($id)
+    {
+        $statement = $this->connection->prepare(
+            'SELECT senha FROM usuarios WHERE id = :id AND perfil = :perfil LIMIT 1'
+        );
+        $statement->execute(array(
+            ':id' => (int) $id,
+            ':perfil' => 'aluno'
+        ));
+        $row = $statement->fetch();
+
+        return $row ? $row['senha'] : null;
     }
 
     public function deleteAluno($id)

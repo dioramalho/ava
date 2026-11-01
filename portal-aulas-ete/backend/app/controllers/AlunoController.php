@@ -2,6 +2,16 @@
 
 class AlunoController extends Controller
 {
+    const SENHA_PADRAO_ALUNO = '@ETE2626';
+
+    public function __construct()
+    {
+        $formato = dirname(__DIR__) . '/core/AlunoFormato.php';
+        if (!class_exists('AlunoFormato', false) && is_file($formato)) {
+            require_once $formato;
+        }
+    }
+
     public function index()
     {
         $this->requireProfessor();
@@ -105,9 +115,10 @@ class AlunoController extends Controller
 
         $id = (int) $request->input('id', 0);
         $nome = $request->input('nome', '');
-        $email = strtolower($request->input('email', ''));
-        $celular = $request->input('celular', '');
+        $email = AlunoFormato::email($request->input('email', ''));
+        $celularInformado = $request->input('celular', '');
         $turmaId = (int) $request->input('turma_id', 0);
+        $status = $request->input('status', '');
 
         if ($id <= 0 || $nome === '' || $email === '' || $turmaId <= 0) {
             $this->json(array(
@@ -123,13 +134,33 @@ class AlunoController extends Controller
             ), 422);
         }
 
+        $statusPermitidos = array('pendente', 'aprovado', 'recusado');
+        if ($status !== '' && !in_array($status, $statusPermitidos, true)) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Status inválido.'
+            ), 422);
+        }
+
         $userModel = new User();
         $aluno = $userModel->findById($id);
-        if (!$aluno || $aluno['perfil'] !== 'aluno' || $aluno['status'] !== 'aprovado') {
+        if (!$aluno || $aluno['perfil'] !== 'aluno') {
             $this->json(array(
                 'success' => false,
                 'message' => 'Aluno não encontrado.'
             ), 404);
+        }
+
+        if ($status === '') {
+            $status = $aluno['status'];
+        }
+
+        $celular = $this->celularParaSalvar($celularInformado, isset($aluno['celular']) ? $aluno['celular'] : '');
+        if ($celular === false) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Informe o celular no formato (81)99794-1373 ou deixe em branco.'
+            ), 422);
         }
 
         $turmaModel = new Turma();
@@ -156,8 +187,9 @@ class AlunoController extends Controller
                 'nome' => $nome,
                 'login' => $login,
                 'email' => $email,
-                'celular' => $celular !== '' ? $celular : null,
-                'turma_id' => $turmaId
+                'celular' => $celular,
+                'turma_id' => $turmaId,
+                'status' => $status
             ));
         } catch (PDOException $exception) {
             $this->json(array(
@@ -170,6 +202,70 @@ class AlunoController extends Controller
             'success' => true,
             'message' => 'Dados do aluno atualizados com sucesso.'
         ), 200);
+    }
+
+    public function resetSenha(Request $request)
+    {
+        $this->requireProfessor();
+
+        $id = (int) $request->input('id', 0);
+        if ($id <= 0) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'ID do aluno é obrigatório.'
+            ), 422);
+        }
+
+        $userModel = new User();
+        $aluno = $userModel->findById($id);
+        if (!$aluno || $aluno['perfil'] !== 'aluno') {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Aluno não encontrado.'
+            ), 404);
+        }
+
+        $hash = PasswordHelper::hash(self::SENHA_PADRAO_ALUNO);
+        if (!$userModel->resetSenhaAluno($id, $hash)) {
+            $this->json(array(
+                'success' => false,
+                'message' => 'Não foi possível redefinir a senha.'
+            ), 500);
+        }
+
+        $this->json(array(
+            'success' => true,
+            'message' => 'Senha redefinida. O aluno entra com @ETE2626.'
+        ), 200);
+    }
+
+    /**
+     * @return string|null|false null se vazio; false se o número mudou e não tem 11 dígitos
+     */
+    private function celularParaSalvar($informado, $atual)
+    {
+        $informado = trim((string) $informado);
+        if ($informado === '') {
+            return null;
+        }
+
+        $digitsNovo = AlunoFormato::digitos($informado);
+        $digitsAtual = AlunoFormato::digitos($atual);
+
+        if (strlen($digitsNovo) > 11) {
+            $digitsNovo = substr($digitsNovo, 0, 11);
+        }
+
+        if (strlen($digitsNovo) === 11) {
+            return AlunoFormato::celular($digitsNovo);
+        }
+
+        if ($digitsNovo === $digitsAtual) {
+            $atual = trim((string) $atual);
+            return $atual === '' ? null : $atual;
+        }
+
+        return false;
     }
 
     public function destroy(Request $request)
