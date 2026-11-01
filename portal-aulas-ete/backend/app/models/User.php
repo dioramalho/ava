@@ -255,20 +255,54 @@ class User extends BaseModel
         return $row ? (int) $row['total'] : 0;
     }
 
+    public function passwordHash($id)
+    {
+        $statement = $this->connection->prepare(
+            'SELECT senha FROM usuarios WHERE id = :id LIMIT 1'
+        );
+        $statement->bindValue(':id', (int) $id, PDO::PARAM_INT);
+        $statement->execute();
+        $row = $statement->fetch();
+
+        return $row && isset($row['senha']) ? $row['senha'] : '';
+    }
+
+    public function updatePassword($id, $hash)
+    {
+        $statement = $this->connection->prepare(
+            'UPDATE usuarios SET senha = :senha WHERE id = :id AND perfil = :perfil'
+        );
+        $statement->execute(array(
+            ':senha' => $hash,
+            ':id' => (int) $id,
+            ':perfil' => 'aluno'
+        ));
+
+        return $statement->rowCount() > 0;
+    }
+
     public function toSessionUser($user)
     {
         $turmaId = isset($user['turma_id']) && $user['turma_id'] !== null && $user['turma_id'] !== ''
             ? (int) $user['turma_id']
             : null;
+        $perfil = isset($user['perfil']) ? $user['perfil'] : '';
+        $precisaTrocarSenha = false;
+
+        if ($perfil === 'aluno') {
+            $hash = array_key_exists('senha', $user) ? $user['senha'] : $this->passwordHash($user['id']);
+            $precisaTrocarSenha = PasswordHelper::storedIsResetPassword($hash);
+        }
 
         return array(
             'id' => (int) $user['id'],
             'nome' => $user['nome'],
             'login' => $user['login'],
-            'perfil' => $user['perfil'],
+            'perfil' => $perfil,
             'turma_id' => $turmaId,
             'turma_codigo' => isset($user['turma_codigo']) ? $user['turma_codigo'] : '',
-            'turma_titulo' => isset($user['turma_titulo']) ? $user['turma_titulo'] : ''
+            'turma_titulo' => isset($user['turma_titulo']) ? $user['turma_titulo'] : '',
+            'precisa_trocar_senha' => $precisaTrocarSenha
         );
     }
 }

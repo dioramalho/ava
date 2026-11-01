@@ -8,13 +8,17 @@ const professorPages = [
   'professor-turmas.php',
   'professor-disciplinas.php',
   'professor-aulas.php',
-  'professor-aula.php'
+  'professor-aula.php',
+  'professor-trabalhos.php',
+  'professor-trabalho.php'
 ];
 
 const studentPages = [
   'dashboard.html',
   'aluno-aulas.html',
-  'aluno-aula.html'
+  'aluno-aula.html',
+  'aluno-trabalhos.html',
+  'aluno-trabalho.html'
 ];
 
 if (loginForm) {
@@ -41,7 +45,7 @@ if (loginForm) {
       });
 
       const user = response.data || {};
-      window.location.href = user.perfil === 'professor' ? 'dashboard-professor.html' : 'dashboard.html';
+      window.location.href = portalHome(user);
     } catch (error) {
       const code = error.payload && error.payload.code;
       if (code === 'aluno_pendente') {
@@ -68,7 +72,17 @@ async function validatePortalSession(options) {
     const user = response.data || null;
 
     if (config.requiredProfile && user && user.perfil !== config.requiredProfile) {
-      window.location.href = user.perfil === 'professor' ? 'dashboard-professor.html' : 'dashboard.html';
+      window.location.href = portalHome(user);
+      return null;
+    }
+
+    if (user && user.perfil === 'aluno' && user.precisa_trocar_senha && !config.allowDefaultPassword) {
+      window.location.href = 'aluno-senha.html';
+      return null;
+    }
+
+    if (config.leavePasswordGate && user && !user.precisa_trocar_senha) {
+      window.location.href = portalHome(user);
       return null;
     }
 
@@ -111,4 +125,22 @@ if (isListedPortalPage(professorPages)) {
 
 if (isListedPortalPage(studentPages)) {
   validatePortalSession({ requiredProfile: 'aluno' });
+}
+
+if (isCurrentPortalFile('aluno-senha.html')) {
+  validatePortalSession({
+    requiredProfile: 'aluno',
+    allowDefaultPassword: true,
+    leavePasswordGate: true
+  });
+}
+
+function portalHome(user) {
+  if (user && user.perfil === 'professor') {
+    return 'dashboard-professor.html';
+  }
+  if (user && user.precisa_trocar_senha) {
+    return 'aluno-senha.html';
+  }
+  return 'dashboard.html';
 }

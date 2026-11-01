@@ -30,6 +30,9 @@ async function apiRequest(route, options) {
   });
 
   if (!response.ok) {
+    if (data && data.code === 'senha_padrao' && !isCurrentPortalFile('aluno-senha.html')) {
+      window.location.href = 'aluno-senha.html';
+    }
     const error = new Error(data.message || 'Erro na comunicação com a API.');
     error.status = response.status;
     error.payload = data;

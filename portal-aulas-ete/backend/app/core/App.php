@@ -48,6 +48,7 @@ class App
         $this->post('/auth/login', 'AuthController', 'login');
         $this->post('/auth/logout', 'AuthController', 'logout');
         $this->get('/auth/me', 'AuthController', 'me');
+        $this->post('/auth/trocar-senha', 'AuthController', 'trocarSenha');
         $this->post('/auth/cadastro-aluno', 'AuthController', 'cadastroAluno');
 
         $this->get('/professor/painel', 'ProfessorController', 'painel');
@@ -81,6 +82,15 @@ class App
         $this->post('/alunos/delete', 'AlunoController', 'destroy');
 
         $this->post('/email/enviar', 'EmailController', 'enviar');
+
+        $this->get('/trabalhos', 'TrabalhoController', 'index');
+        $this->get('/trabalhos/detalhe', 'TrabalhoController', 'show');
+        $this->post('/trabalhos', 'TrabalhoController', 'store');
+        $this->post('/trabalhos/status', 'TrabalhoController', 'status');
+        $this->post('/trabalhos/feedback', 'TrabalhoController', 'feedback');
+        $this->get('/aluno/trabalhos', 'TrabalhoController', 'alunoIndex');
+        $this->get('/aluno/trabalhos/detalhe', 'TrabalhoController', 'alunoShow');
+        $this->post('/aluno/trabalhos/entregar', 'TrabalhoController', 'entregar');
     }
 
     private function get($route, $controller, $action)

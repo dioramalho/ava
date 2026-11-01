@@ -9,8 +9,25 @@ class LessonUpload
      */
     public static function store($file, $config)
     {
+        return self::storeAs($file, $config, 'aula_', array('pdf', 'docx'), 'Apenas arquivos PDF ou DOCX são permitidos.');
+    }
+
+    /**
+     * @param array $file
+     * @param array $config
+     * @param string $prefix
+     * @param array $allowed
+     * @param string $tipoMensagem
+     * @return array
+     */
+    public static function storeAs($file, $config, $prefix, $allowed, $tipoMensagem)
+    {
         if (!is_array($file) || empty($file['tmp_name'])) {
             throw new InvalidArgumentException('Arquivo inválido.');
+        }
+
+        if (!in_array($prefix, array('aula_', 'trabalho_', 'entrega_'), true)) {
+            throw new InvalidArgumentException('Prefixo de arquivo inválido.');
         }
 
         if ((int) $file['error'] !== UPLOAD_ERR_OK) {
@@ -23,9 +40,8 @@ class LessonUpload
         }
 
         $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $allowed = array('pdf', 'docx');
         if (!in_array($extension, $allowed, true)) {
-            throw new RuntimeException('Apenas arquivos PDF ou DOCX são permitidos.');
+            throw new RuntimeException($tipoMensagem);
         }
 
         if (!is_uploaded_file($file['tmp_name'])) {
@@ -37,7 +53,7 @@ class LessonUpload
             throw new RuntimeException('Não foi possível preparar a pasta de uploads.');
         }
 
-        $safeName = str_replace('.', '', uniqid('aula_', true)) . '.' . $extension;
+        $safeName = str_replace('.', '', uniqid($prefix, true)) . '.' . $extension;
         $destination = $uploadDir . DIRECTORY_SEPARATOR . $safeName;
 
         if (!move_uploaded_file($file['tmp_name'], $destination)) {
@@ -64,7 +80,7 @@ class LessonUpload
     public static function deleteStored($caminhoArquivo, $config)
     {
         $basename = basename(str_replace('\\', '/', (string) $caminhoArquivo));
-        if ($basename === '' || !preg_match('/^aula_[A-Za-z0-9]+\.(pdf|docx)$/', $basename)) {
+        if ($basename === '' || !preg_match('/^(aula|trabalho|entrega)_[A-Za-z0-9]+\.(pdf|docx|doc)$/', $basename)) {
             return false;
         }
 

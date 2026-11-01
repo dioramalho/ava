@@ -16,6 +16,7 @@
             <li class="nav-item"><a class="nav-link" href="professor-turmas.php">Turmas</a></li>
             <li class="nav-item"><a class="nav-link" href="professor-disciplinas.php">Disciplinas</a></li>
             <li class="nav-item"><a class="nav-link active" href="professor-aulas.php">Aulas</a></li>
+            <li class="nav-item"><a class="nav-link" href="professor-trabalhos.php">Trabalhos</a></li>
             <li class="nav-item"><a class="nav-link" href="professor-alunos.php">Alunos</a></li>
             <li class="nav-item ms-lg-2"><button id="logoutBtn" class="btn btn-sm btn-outline-light btn-touch">Sair</button></li>
           </ul>
