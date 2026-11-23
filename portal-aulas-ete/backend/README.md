@@ -36,7 +36,7 @@ backend/
 ├── config/
 │   ├── config.php
 │   ├── mail.local.example.php
-│   ├── mail.local.php   # credenciais SMTP; ignorado pelo Git
+│   ├── mail.local.php   # SMTP versionado; senha vazia (use PORTAL_MAIL_PASSWORD)
 │   ├── cacert.pem
 │   └── sqlite_schema.sql
 ├── public/
@@ -51,7 +51,7 @@ backend/
 └── README.md
 ```
 
-`vendor/` é gerado por `composer install` e não é versionado. O PHPMailer fica só nessa pasta. `config/mail.local.php` também fica de fora do Git. No FTP, os dois precisam ser preservados no servidor — ver [Deploy](../../README.md#deploy) no README da raiz.
+`vendor/` é gerado por `composer install` e não é versionado. O PHPMailer fica só nessa pasta. `config/mail.local.php` entra no Git com a senha vazia; a senha fica em `PORTAL_MAIL_PASSWORD` ou só na cópia do servidor. No FTP, `vendor/` e `mail.local.php` precisam ser preservados — ver [Deploy](../../README.md#deploy) no README da raiz.
 
 ---
 
@@ -135,7 +135,7 @@ return array(
 cp config/mail.local.example.php config/mail.local.php
 ```
 
-`mail.local.php` não entra no Git. O arquivo de exemplo e o `cacert.pem` (verificação TLS) entram. Sem `vendor/` (PHPMailer), `Mailer` lança exceção e a rota responde 500. O `Autoloader.php` não carrega classes do Composer.
+`mail.local.php` entra no Git com a senha vazia. A senha não é versionada: use `PORTAL_MAIL_PASSWORD`. O arquivo de exemplo e o `cacert.pem` (verificação TLS) também entram. Sem `vendor/` (PHPMailer), `Mailer` lança exceção e a rota responde 500. O `Autoloader.php` não carrega classes do Composer.
 
 ---
 
@@ -452,7 +452,7 @@ O HTML segue `app/views/email/layout.php` (marca ETE). O texto da mensagem é es
 5. **Config SQLite** — driver env não chega automaticamente ao `Database` (ver README raiz).
 6. **Pedido público** — `POST /auth/cadastro-aluno` cria aluno `pendente`; o professor aprova e escolhe a turma.
 7. **Controllers legados** — `Materia`, `Recado` e `Documento` não têm rota registrada.
-8. **E-mail** — `POST /email/enviar` exige professor, `mail.local.php` (ou `PORTAL_MAIL_*`) e `vendor/` com PHPMailer. O Git ignora `mail.local.php` e `vendor/`. O FTP automático não apaga esses caminhos no servidor; um envio manual com apagar remoto, sem as mesmas exclusões, remove a senha SMTP e a biblioteca.
+8. **E-mail** — `POST /email/enviar` exige professor, `mail.local.php` (ou `PORTAL_MAIL_*`) e `vendor/` com PHPMailer. O Git versiona `mail.local.php` sem senha e ignora `vendor/`. O FTP automático não apaga esses caminhos no servidor; um envio manual com apagar remoto, sem as mesmas exclusões, remove a configuração SMTP do servidor e a biblioteca.
 
 ---
 
