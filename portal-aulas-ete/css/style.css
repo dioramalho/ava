@@ -141,6 +141,19 @@ body {
   border-radius: 0.5rem;
 }
 
+.ete-navbar button.nav-link {
+  background: transparent;
+  border: 0;
+  width: 100%;
+  text-align: left;
+}
+
+@media (min-width: 992px) {
+  .ete-navbar button.nav-link {
+    width: auto;
+  }
+}
+
 .ete-navbar .nav-link:hover,
 .ete-navbar .nav-link.active {
   color: var(--ete-navy-deep);
