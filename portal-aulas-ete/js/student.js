@@ -77,9 +77,36 @@
     return '';
   }
 
+  function mostrarSecaoSenha() {
+    const secao = document.getElementById('secaoAlterarSenha');
+    const menu = document.getElementById('menuAlterarSenha');
+    if (!secao) {
+      return;
+    }
+    secao.classList.remove('d-none');
+    if (menu) {
+      menu.classList.add('active');
+      menu.setAttribute('aria-current', 'true');
+    }
+    if (window.location.hash !== '#alterar-senha') {
+      history.replaceState(null, '', '#alterar-senha');
+    }
+    secao.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   function initTrocaSenha() {
     const form = document.getElementById('formSenha');
     const alertBox = document.getElementById('senhaAlert');
+    const menu = document.getElementById('menuAlterarSenha');
+    if (menu && menu.getAttribute('data-bound') !== '1') {
+      menu.setAttribute('data-bound', '1');
+      menu.addEventListener('click', function () {
+        mostrarSecaoSenha();
+      });
+    }
+    if (window.location.hash === '#alterar-senha') {
+      mostrarSecaoSenha();
+    }
     if (!form || form.getAttribute('data-bound') === '1') {
       return;
     }
