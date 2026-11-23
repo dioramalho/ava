@@ -68,7 +68,7 @@ O código da aplicação vive em [`portal-aulas-ete/`](./portal-aulas-ete/). Est
 ```text
 ava/
 ├── README.md                          # Documentação principal (este arquivo)
-├── .gitignore                         # vendor/, mail.local.php, composer.phar, *.log, .DS_Store
+├── .gitignore                         # vendor/, composer.phar, *.log, .DS_Store
 ├── portal_aulas_ete.sql               # Schema + seed MySQL/MariaDB
 ├── .github/workflows/main.yml         # composer install + deploy FTP (develop)
 └── portal-aulas-ete/                  # Aplicação
@@ -342,7 +342,7 @@ Um professor autenticado dispara um e-mail HTML com a identidade visual do porta
 | `EmailTemplate` | Monta o HTML em `app/views/email/layout.php` com o CSS de `email.css` |
 | `Mailer` | Envia por SMTP com PHPMailer 6.9.3 |
 | `config/mail.local.example.php` | Modelo versionado das credenciais SMTP |
-| `config/mail.local.php` | Credenciais reais. O Git ignora este arquivo |
+| `config/mail.local.php` | Host, porta, usuário e remetente versionados. A senha fica vazia no Git |
 | `config/cacert.pem` | Pacote de CAs usado na verificação TLS, quando o arquivo existe |
 
 **Campos** (JSON ou form): `para`, `assunto` (até 180 caracteres), `mensagem` (até 10.000). A mensagem vira HTML escapado. **200** quando o SMTP aceita o envio, **422** se a validação falha, **500** se o servidor, o remetente ou o PHPMailer não estiverem prontos. O detalhe da falha vai para o log do PHP; a API devolve só “Não foi possível enviar o e-mail.”
@@ -351,7 +351,7 @@ A configuração é lida nesta ordem: variável `PORTAL_MAIL_*`, depois a mesma 
 
 No ambiente local:
 
-1. Copie `portal-aulas-ete/backend/config/mail.local.example.php` para `mail.local.php` e preencha host, porta, usuário, senha, criptografia e remetente.
+1. O `mail.local.php` já está no repositório, com a senha vazia. Defina `PORTAL_MAIL_PASSWORD` no ambiente (ou preencha a chave `password` só na máquina, sem commitar).
 2. Rode `composer install` em `portal-aulas-ete/backend`. O `Autoloader.php` não carrega o PHPMailer; sem `vendor/`, a rota responde 500.
 
 ---
@@ -373,10 +373,11 @@ O [`.gitignore`](./.gitignore) deixa estes caminhos fora do repositório. O chec
 | Ignorado pelo Git | Por quê | O que fazer no FTP |
 |-------------------|---------|--------------------|
 | `portal-aulas-ete/backend/vendor/` | Saída do `composer install`, inclusive o PHPMailer | O workflow **não envia nem apaga** `backend/vendor/`. As classes de `app/` sobem no código-fonte e carregam pelo `Autoloader.php`. O PHPMailer só existe dentro de `vendor/`: depois de `composer install` na máquina local, envie `backend/vendor/` **uma vez**, por FTP manual. Os deploys seguintes preservam a pasta. Sem ela, `POST /email/enviar` responde 500. |
-| `portal-aulas-ete/backend/config/mail.local.php` | Senha e host SMTP. O exemplo versionado é `mail.local.example.php` | Crie este arquivo **no servidor** (ou envie só o de produção). O workflow exclui `backend/config/mail.local.php`, então o `--delete` não apaga a configuração. Não commite o arquivo e não substitua o de produção pelo de desenvolvimento. |
 | `composer.phar` | Binário local do Composer, em qualquer pasta | Não faz parte da aplicação. Não envie. |
 | `*.log` | Logs locais | O workflow não apaga `*.log` no servidor. Não envie logs da máquina de desenvolvimento. |
 | `.DS_Store` | Metadado do macOS | Não envie. |
+
+`mail.local.php` **entra** no Git, com a senha vazia. O workflow mesmo assim exclui `backend/config/mail.local.php`: o deploy não substitui a cópia do servidor (onde a senha pode estar preenchida) pelo arquivo do repositório.
 
 `backend/storage/uploads/` **não** está no `.gitignore` (os PDF/DOCX das aulas ficam só no disco). O workflow mesmo assim exclui `backend/storage/uploads/**`: o deploy não publica os arquivos locais nem apaga os que já estão em produção.
 
@@ -417,7 +418,7 @@ Itens conhecidos no working tree / código (revisar antes de considerar o fluxo 
 | Autenticação | `session.js` exporta `validatePortalSession`; login do professor no seed funciona com sha1 |
 | Cadastro aluno | `POST /auth/cadastro-aluno` + aprovação em `/alunos/aprovar` |
 | Composer | Autoload classmap das classes de `app/`; o PHPMailer depende de `vendor/` no servidor |
-| E-mail | `POST /email/enviar` (professor). SMTP em `mail.local.php` ou `PORTAL_MAIL_*`; o arquivo local não entra no Git |
+| E-mail | `POST /email/enviar` (professor). SMTP em `mail.local.php` (sem senha no Git) ou `PORTAL_MAIL_*` |
 | `config.php` × SQLite | Driver `sqlite` lido via env pode não ser injetado no array `db` |
 | Senhas | bcrypt nas contas novas; seed do professor ainda em `sha1('1234')` |
 | Erros 500 | O front controller devolve mensagem genérica (não vaza a exceção no JSON) |
