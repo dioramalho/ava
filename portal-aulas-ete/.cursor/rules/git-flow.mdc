@@ -1,0 +1,31 @@
+---
+description: Git Flow neste projeto — conferir a main, perguntar e só então criar branch, commit ou versão
+alwaysApply: true
+---
+
+# Git Flow do portal
+
+Antes de editar código, siga a skill `git-flow-branch` para prefixo e nome. Pergunte antes de criar a branch e só atualize a `main` com confirmação. Isso prevalece sobre a skill neste repositório.
+
+Pergunta, revisão e explicação ficam na branch atual.
+
+## Antes de implementar
+
+1. `git status` e `git branch --show-current`.
+2. `git fetch origin`. Compare a `main` local com `origin/main` (`master`, se não houver `main`). Não invente `develop`.
+3. Diga se a local está igual, atrás ou na frente. Se o fetch falhar ou não houver remoto, pare e avise. Não edite.
+4. Pergunte: "Quer que eu crie uma branch nova a partir da main atualizada?"
+5. Sem um sim: não faça pull, não crie branch e não edite.
+6. Com sim, e a local atrás: entre na base, faça pull e então `git checkout -b <prefixo>/<slug> <base>`.
+7. Árvore suja de outra tarefa: pare e pergunte. Não misture.
+8. Já nesta branch, com o nome desta tarefa: permaneça nela.
+
+Prefixos da skill: `feature/` (comportamento), `bugfix/` (correção), `hotfix/` (produção), `release/x.y.z` (versão). Exemplo: `feature/excluir-aluno`.
+
+## Commits e versão
+
+Commit, push, merge e tag só quando o usuário pedir.
+
+Versão no Git: branch `release/1.4.0` e, no pedido, tag `v1.4.0`. Não crie arquivo de versão por conta própria.
+
+Se a pasta não for um repositório Git, avise e pergunte antes de `git init`.
